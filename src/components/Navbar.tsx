@@ -7,7 +7,7 @@ import TresAppsLogo from "./TresAppsLogo";
 export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl dark:bg-[#0e0e0f]/60 shadow-2xl shadow-black/40">
-      <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto font-headline tracking-tight font-bold text-sm">
+      <div className="flex justify-between items-center px-8 py-3 md:py-4 max-w-7xl mx-auto font-headline tracking-tight font-bold text-sm">
         <Link href="/" className="cursor-pointer">
           <TresAppsLogo />
         </Link>

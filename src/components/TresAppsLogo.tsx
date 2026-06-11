@@ -7,9 +7,9 @@ export default function TresAppsLogo({ className = "" }: { className?: string })
       <Image
         src="/images/logo-tresapps.webp"
         alt="TresApps Logo"
-        width={160}
-        height={32}
-        className="w-auto h-8"
+        width={200}
+        height={40}
+        className="w-auto h-10 md:h-14"
         priority
       />
     </div>

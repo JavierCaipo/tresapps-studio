@@ -20,6 +20,10 @@ const firaCode = Fira_Code({
 export const metadata: Metadata = {
   title: "TresApps | High-End SaaS Product Studio & Lab",
   description: "We build real SaaS products",
+  icons: {
+    icon: '/icon.png',
+    apple: '/apple-icon.png',
+  },
 };
 
 export default function RootLayout({
