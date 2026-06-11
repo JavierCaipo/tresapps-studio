@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>TresApps | High-End SaaS Product Studio &amp; Lab</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;family=Fira+Code:wght@400;500&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline": "#767576",
+                        "on-secondary-container": "#ecfaff",
+                        "primary-fixed": "#ae8dff",
+                        "on-tertiary-fixed-variant": "#00377b",
+                        "secondary-container": "#00687a",
+                        "secondary-fixed-dim": "#48d4f3",
+                        "primary": "#ba9eff",
+                        "on-tertiary": "#001e4a",
+                        "on-primary-fixed": "#000000",
+                        "tertiary-container": "#4388fd",
+                        "surface-dim": "#0e0e0f",
+                        "on-error-container": "#ffb2b9",
+                        "secondary-fixed": "#65e1ff",
+                        "inverse-primary": "#6e3bd7",
+                        "surface-container": "#1a191b",
+                        "on-tertiary-fixed": "#00163b",
+                        "error-container": "#a70138",
+                        "outline-variant": "#484849",
+                        "primary-container": "#ae8dff",
+                        "tertiary-fixed-dim": "#73a2ff",
+                        "surface-tint": "#ba9eff",
+                        "primary-dim": "#8455ef",
+                        "on-tertiary-container": "#000311",
+                        "on-primary-fixed-variant": "#370086",
+                        "error": "#ff6e84",
+                        "surface-container-highest": "#262627",
+                        "surface-bright": "#2c2c2d",
+                        "secondary-dim": "#40ceed",
+                        "on-background": "#ffffff",
+                        "primary-fixed-dim": "#a27cff",
+                        "on-error": "#490013",
+                        "tertiary": "#699cff",
+                        "surface": "#0e0e0f",
+                        "error-dim": "#d73357",
+                        "inverse-surface": "#fcf8f9",
+                        "tertiary-fixed": "#8ab0ff",
+                        "surface-container-lowest": "#000000",
+                        "on-secondary-fixed-variant": "#005969",
+                        "on-secondary": "#004b58",
+                        "inverse-on-surface": "#565556",
+                        "on-primary-container": "#2b006e",
+                        "on-secondary-fixed": "#003a45",
+                        "on-surface": "#ffffff",
+                        "on-primary": "#39008c",
+                        "background": "#0e0e0f",
+                        "tertiary-dim": "#699cff",
+                        "surface-container-high": "#201f21",
+                        "surface-variant": "#262627",
+                        "secondary": "#53ddfc",
+                        "on-surface-variant": "#adaaab",
+                        "surface-container-low": "#131314"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "mono": ["Fira Code", "monospace"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'reveal': 'reveal 0.8s cubic-bezier(0, 0, 0.2, 1) forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        reveal: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(26, 25, 27, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .hero-grid {
+            background-image: radial-gradient(circle at 2px 2px, #262627 1px, transparent 0);
+            background-size: 40px 40px;
+            animation: grid-move 60s linear infinite;
+        }
+
+        @keyframes grid-move {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 40px 40px;
+            }
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+
+            from,
+            to {
+                border-color: transparent
+            }
+
+            50% {
+                border-color: #ba9eff
+            }
+        }
+
+        .reveal-on-scroll {
+            opacity: 0;
+        }
+
+        .liquid-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .liquid-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease-out, height 0.6s ease-out;
+        }
+
+        .liquid-button:hover::after {
+            width: 300%;
+            height: 300%;
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body selection:bg-primary selection:text-on-primary">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl dark:bg-[#0e0e0f]/60 shadow-2xl shadow-black/40">
+        <div
+            class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto font-manrope tracking-tight font-bold text-sm">
+            <div class="text-xl font-black tracking-tighter text-white uppercase group cursor-pointer">
+                <span class="group-hover:text-primary transition-colors">Tres</span><span
+                    class="text-primary group-hover:text-white transition-colors">Apps</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a class="text-[#adaaab] font-medium hover:text-white transition-colors duration-300"
+                    href="#">Products</a>
+                <a class="text-[#adaaab] font-medium hover:text-white transition-colors duration-300" href="#">Lab</a>
+                <a class="text-[#adaaab] font-medium hover:text-white transition-colors duration-300"
+                    href="#">Services</a>
+                <a class="text-[#adaaab] font-medium hover:text-white transition-colors duration-300" href="#">How it
+                    Works</a>
+            </div>
+            <button
+                class="bg-primary text-on-primary px-6 py-2.5 rounded-full scale-95 active:scale-90 transition-transform hover:brightness-110 liquid-button">
+                Start a Project
+            </button>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center pt-20 overflow-hidden hero-grid">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-surface to-surface z-0"></div>
+        <div
+            class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-primary-dim/20 rounded-full blur-[120px] animate-pulse-slow">
+        </div>
+        <div
+            class="absolute top-1/2 right-0 w-[400px] h-[400px] bg-secondary-container/20 rounded-full blur-[100px] animate-pulse-slow">
+        </div>
+        <div class="max-w-7xl mx-auto px-8 relative z-10 grid md:grid-cols-2 gap-16 items-center">
+            <div class="space-y-8 reveal-on-scroll animate-reveal">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-highest border border-outline-variant/20">
+                    <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                    <span class="text-xs font-bold tracking-widest uppercase text-on-surface-variant">Synthesizing
+                        Tomorrow</span>
+                </div>
+                <h1 class="text-6xl md:text-8xl font-headline font-extrabold tracking-tighter leading-tight">
+                    We build <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-tertiary">real
+                        SaaS</span> products
+                </h1>
+                <p class="text-xl text-on-surface-variant max-w-lg leading-relaxed">
+                    From raw idea to hyper-scalable platforms. We don't just ship code; we engineer market-ready digital
+                    assets in our synthetic lab.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <button
+                        class="liquid-button bg-gradient-to-br from-primary to-tertiary text-on-primary-fixed font-bold px-8 py-4 rounded-xl shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
+                        View Projects
+                    </button>
+                    <button
+                        class="bg-surface-container-high border border-outline-variant/30 text-on-surface font-bold px-8 py-4 rounded-xl hover:bg-surface-bright transition-colors">
+                        Our Process
+                    </button>
+                </div>
+            </div>
+            <!-- Animated UI Elements -->
+            <div class="relative hidden md:block h-[600px]">
+                <div class="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent rounded-full blur-3xl">
+                </div>
+                <!-- Floating Dashboard Snippet -->
+                <div
+                    class="absolute top-10 right-0 glass p-4 rounded-2xl border border-outline-variant/20 w-80 animate-float shadow-2xl z-20">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-2 h-2 rounded-full bg-error"></div>
+                        <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="ml-auto text-[10px] font-mono text-on-surface-variant">analytics.v3.ts</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="h-2 w-3/4 bg-primary/20 rounded"></div>
+                        <div class="h-2 w-1/2 bg-secondary/20 rounded"></div>
+                        <div class="flex gap-2">
+                            <div
+                                class="h-12 flex-1 bg-surface-container-highest rounded border border-outline-variant/10 flex items-end p-2 gap-1">
+                                <div class="w-full bg-primary h-1/2 rounded-t-sm"></div>
+                                <div class="w-full bg-primary h-3/4 rounded-t-sm"></div>
+                                <div class="w-full bg-primary h-2/3 rounded-t-sm"></div>
+                                <div class="w-full bg-secondary h-full rounded-t-sm"></div>
+                            </div>
+                            <div
+                                class="h-12 flex-1 bg-surface-container-highest rounded border border-outline-variant/10 flex items-end p-2 gap-1">
+                                <div class="w-full bg-tertiary h-1/3 rounded-t-sm"></div>
+                                <div class="w-full bg-tertiary h-1/2 rounded-t-sm"></div>
+                                <div class="w-full bg-primary h-2/3 rounded-t-sm"></div>
+                                <div class="w-full bg-primary h-1/4 rounded-t-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Floating Node Connection -->
+                <div
+                    class="absolute bottom-20 left-10 glass p-5 rounded-3xl border border-outline-variant/20 w-72 animate-float-delayed shadow-2xl z-10">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-[10px] font-bold text-secondary tracking-widest uppercase">NexusCore
+                            Node</span>
+                        <span
+                            class="text-[10px] px-2 py-0.5 rounded bg-secondary-container/30 text-secondary">Active</span>
+                    </div>
+                    <div class="relative h-24 flex items-center justify-center">
+                        <div class="absolute w-12 h-12 rounded-full border border-secondary/50 animate-ping"></div>
+                        <span class="material-symbols-outlined text-4xl text-secondary" data-icon="hub">hub</span>
+                        <div class="absolute top-0 right-0 w-1.5 h-1.5 rounded-full bg-secondary"></div>
+                        <div class="absolute bottom-2 left-4 w-1.5 h-1.5 rounded-full bg-primary"></div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 gap-2">
+                        <div class="bg-surface/40 p-2 rounded-lg text-center">
+                            <p class="text-[8px] text-on-surface-variant">LATENCY</p>
+                            <p class="text-xs font-mono font-bold">14ms</p>
+                        </div>
+                        <div class="bg-surface/40 p-2 rounded-lg text-center">
+                            <p class="text-[8px] text-on-surface-variant">UPTIME</p>
+                            <p class="text-xs font-mono font-bold">99.9%</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Background Glows -->
+                <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/30 rounded-full blur-[60px]"></div>
+                <div class="absolute bottom-1/4 right-1/4 w-40 h-40 bg-secondary/20 rounded-full blur-[80px]"></div>
+            </div>
+        </div>
+    </section>
+    <!-- Products Grid -->
+    <section class="py-32 px-8 max-w-7xl mx-auto">
+        <div class="mb-20 space-y-4 reveal-on-scroll" style="animation: reveal 0.8s forwards;">
+            <h2 class="text-4xl md:text-5xl font-headline font-bold tracking-tight">Our Production <span
+                    class="text-primary-fixed">Output</span></h2>
+            <p class="text-on-surface-variant max-w-2xl text-lg">Industrial-grade SaaS platforms developed, launched,
+                and scaled by our elite product engineers.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <!-- Product Card 1 -->
+            <div
+                class="group relative surface-container-low rounded-[2rem] p-8 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 border border-outline-variant/10 hover:shadow-[0_0_50px_-12px_rgba(83,221,252,0.3)] bg-gradient-to-b from-surface-container-low to-surface-container-low hover:from-surface-container-high/50 overflow-hidden">
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                </div>
+                <div class="relative z-10 h-full flex flex-col">
+                    <div class="flex justify-between items-start mb-8">
+                        <div
+                            class="p-4 bg-surface-container-highest rounded-2xl border border-outline-variant/20 shadow-inner group-hover:text-secondary transition-colors">
+                            <span class="material-symbols-outlined text-3xl"
+                                data-icon="rocket_launch">rocket_launch</span>
+                        </div>
+                        <span
+                            class="px-4 py-1.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase tracking-widest border border-secondary/20">Production</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 group-hover:text-secondary transition-colors">NexusCore</h3>
+                    <p class="text-on-surface-variant text-sm mb-8 leading-relaxed font-medium">Logistics AI platform
+                        specializing in automated supply chain intelligence and predictive routing for global
+                        enterprises.</p>
+                    <div class="flex flex-wrap gap-2 mb-10">
+                        <span
+                            class="px-3 py-1 text-[10px] bg-surface-container-highest rounded-lg text-on-surface-variant font-bold border border-outline-variant/10">LOGISTICS
+                            AI</span>
+                        <span
+                            class="px-3 py-1 text-[10px] bg-surface-container-highest rounded-lg text-on-surface-variant font-bold border border-outline-variant/10">ENTERPRISE</span>
+                    </div>
+                    <div class="mt-auto relative overflow-hidden rounded-2xl border border-outline-variant/20">
+                        <img alt="NexusCore Interface"
+                            class="w-full h-44 object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAELQMBSsMqc4EamtaouImQMf5o4KV69-_i7ijRFZuySZArlzLH48l7gtrTL9QbUp2J9hJDQO3Kq3MEIO8vJz2HGOiK42N7sNbHbuRlVY4P10cHWK8HHo2anQoYSGyFm_ylJVPCdfVS4YzgcRArl4Gq1r32HblfsqFbQxUYX9BRLiMXMZihguENhWNea8BRK_OF_o2NUFYGp7xBkuYWqoiU48hzeRpdxH5TAZrE_WMtZxblSqNRm5s99EKN9SRhhAfOpfQXKh-32N6s" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low/80 to-transparent">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Product Card 2 -->
+            <div
+                class="group relative surface-container-low rounded-[2rem] p-8 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 border border-outline-variant/10 hover:shadow-[0_0_50px_-12px_rgba(186,158,255,0.3)] bg-gradient-to-b from-surface-container-low to-surface-container-low hover:from-surface-container-high/50 overflow-hidden">
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                </div>
+                <div class="relative z-10 h-full flex flex-col">
+                    <div class="flex justify-between items-start mb-8">
+                        <div
+                            class="p-4 bg-surface-container-highest rounded-2xl border border-outline-variant/20 shadow-inner group-hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-3xl" data-icon="neurology">neurology</span>
+                        </div>
+                        <span
+                            class="px-4 py-1.5 rounded-full bg-primary-container/20 text-primary text-[10px] font-bold uppercase tracking-widest border border-primary/20">Active
+                            Lab</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">Synthetix Labs</h3>
+                    <p class="text-on-surface-variant text-sm mb-8 leading-relaxed font-medium">A high-performance UI
+                        Engine for rapid prototyping and generating complex, state-driven interfaces with pixel
+                        precision.</p>
+                    <div class="flex flex-wrap gap-2 mb-10">
+                        <span
+                            class="px-3 py-1 text-[10px] bg-surface-container-highest rounded-lg text-on-surface-variant font-bold border border-outline-variant/10">UI
+                            ENGINE</span>
+                        <span
+                            class="px-3 py-1 text-[10px] bg-surface-container-highest rounded-lg text-on-surface-variant font-bold border border-outline-variant/10">DEVTOOLS</span>
+                    </div>
+                    <div class="mt-auto relative overflow-hidden rounded-2xl border border-outline-variant/20">
+                        <img alt="Synthetix Interface"
+                            class="w-full h-44 object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMoKdM2s39kZjVvZzisrbRR0hp2pt5hJvmmIdRgVYIQiLs9RgpL58gbSrmS4Hn4bm2VbL8_C5tZ2Wq8tIsQD7bIS0RnT2KkWIEhddGxzg3nQpDHi7aaVWXbgHXbViQqrSqjjA5-FP7OLN7fLRFRa2h72RO-V9UZy65SAlQ3lWLsLEqdrcLZWV3C5mdcq7wkvZj0oikCthqPRru2gr1grpR5iJe5qa15jMc8tmHQizf4Ar6nyyLc6_PGgdvGMjT4lqS0hLt0QXVaD-Q" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low/80 to-transparent">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Product Card 3 -->
+            <div
+                class="group relative surface-container-low rounded-[2rem] p-8 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 border border-outline-variant/10 hover:shadow-[0_0_50px_-12px_rgba(105,156,255,0.3)] bg-gradient-to-b from-surface-container-low to-surface-container-low hover:from-surface-container-high/50 overflow-hidden">
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-tertiary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                </div>
+                <div class="relative z-10 h-full flex flex-col">
+                    <div class="flex justify-between items-start mb-8">
+                        <div
+                            class="p-4 bg-surface-container-highest rounded-2xl border border-outline-variant/20 shadow-inner group-hover:text-tertiary transition-colors">
+                            <span class="material-symbols-outlined text-3xl" data-icon="database">database</span>
+                        </div>
+                        <span
+                            class="px-4 py-1.5 rounded-full bg-tertiary-container/20 text-tertiary text-[10px] font-bold uppercase tracking-widest border border-tertiary/20">Enterprise</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 group-hover:text-tertiary transition-colors">VaultOS</h3>
+                    <p class="text-on-surface-variant text-sm mb-8 leading-relaxed font-medium">Next-generation Fintech
+                        Security layer providing encrypted data management and military-grade vaulting services.</p>
+                    <div class="flex flex-wrap gap-2 mb-10">
+                        <span
+                            class="px-3 py-1 text-[10px] bg-surface-container-highest rounded-lg text-on-surface-variant font-bold border border-outline-variant/10">FINTECH</span>
+                        <span
+                            class="px-3 py-1 text-[10px] bg-surface-container-highest rounded-lg text-on-surface-variant font-bold border border-outline-variant/10">SECURITY</span>
+                    </div>
+                    <div class="mt-auto relative overflow-hidden rounded-2xl border border-outline-variant/20">
+                        <img alt="VaultOS Network"
+                            class="w-full h-44 object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7Hb2f5k5Go7-H9XKnMF_9lV7bfX_DTmz8uq137ScVJNOsprn4E3oHW5K4Q9h8GjzBIf2JYDpG6eIJR9E5CsokOOvpmdkzQpEw90AJs2h3u17vYC42rPQyApLCWaZwA28_HANtc3O_5s2Pnuj2ZQy6nQt1lst_UyiqhkqCm9uTQ8CWqLisA4P6qx3Few4TA2JCKT4tFhqx33MW7QnpmWnKSGgBT_N3WkWY17hN8R2Qh3gR5_0kCW_HjnllwwElblMkCNNP9DijPGFz" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low/80 to-transparent">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Lab Section (Redesigned) -->
+    <section class="py-40 bg-surface-container-lowest overflow-hidden relative">
+        <div class="absolute inset-0 opacity-10 pointer-events-none"
+            style="background-image: linear-gradient(0deg, #131314 1px, transparent 1px), linear-gradient(90deg, #131314 1px, transparent 1px); background-size: 20px 20px;">
+        </div>
+        <div class="max-w-7xl mx-auto px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-20 items-center">
+                <div class="space-y-10 reveal-on-scroll" style="animation: reveal 0.8s forwards;">
+                    <div
+                        class="inline-flex items-center gap-2 text-primary font-mono text-sm tracking-widest bg-primary/10 px-4 py-2 rounded-full border border-primary/20">
+                        <span class="material-symbols-outlined text-sm" data-icon="terminal">terminal</span>
+                        $ TRES_APPS --EXPERIMENTAL_MODE
+                    </div>
+                    <h2 class="text-6xl font-headline font-black italic tracking-tighter uppercase leading-none">The
+                        Synthetic <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Lab</span>
+                    </h2>
+                    <p class="text-on-surface-variant leading-relaxed text-xl max-w-lg">
+                        Our high-end workspace where we open-source core modules and push the boundaries of technical
+                        architecture.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Repo Card 1 -->
+                        <div
+                            class="p-6 rounded-2xl border border-outline-variant/10 bg-surface-container hover:bg-surface-container-high transition-colors group cursor-pointer">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="material-symbols-outlined text-primary"
+                                    data-icon="folder_zip">folder_zip</span>
+                                <div class="flex gap-3 text-[10px] font-mono text-on-surface-variant">
+                                    <span class="flex items-center gap-1"><span
+                                            class="w-2 h-2 rounded-full bg-yellow-500"></span> 2.4k</span>
+                                    <span class="flex items-center gap-1"><span
+                                            class="w-2 h-2 rounded-full bg-primary"></span> 842</span>
+                                </div>
+                            </div>
+                            <h4 class="font-mono text-white text-sm mb-2 group-hover:text-primary transition-colors">
+                                tres-core-engine</h4>
+                            <p class="text-[10px] text-on-surface-variant line-clamp-2">High-performance Rust framework
+                                for distributed state management.</p>
+                            <div class="mt-4 flex gap-2">
+                                <span
+                                    class="px-2 py-0.5 bg-surface rounded text-[8px] font-mono border border-outline-variant/10">RUST</span>
+                                <span
+                                    class="px-2 py-0.5 bg-surface rounded text-[8px] font-mono border border-outline-variant/10">WASM</span>
+                            </div>
+                        </div>
+                        <!-- Repo Card 2 -->
+                        <div
+                            class="p-6 rounded-2xl border border-outline-variant/10 bg-surface-container hover:bg-surface-container-high transition-colors group cursor-pointer">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="material-symbols-outlined text-secondary"
+                                    data-icon="terminal">terminal</span>
+                                <div class="flex gap-3 text-[10px] font-mono text-on-surface-variant">
+                                    <span class="flex items-center gap-1"><span
+                                            class="w-2 h-2 rounded-full bg-yellow-500"></span> 1.8k</span>
+                                    <span class="flex items-center gap-1"><span
+                                            class="w-2 h-2 rounded-full bg-primary"></span> 312</span>
+                                </div>
+                            </div>
+                            <h4 class="font-mono text-white text-sm mb-2 group-hover:text-secondary transition-colors">
+                                neon-ui-kit</h4>
+                            <p class="text-[10px] text-on-surface-variant line-clamp-2">React 19 component library
+                                focused on high-density data visualization.</p>
+                            <div class="mt-4 flex gap-2">
+                                <span
+                                    class="px-2 py-0.5 bg-surface rounded text-[8px] font-mono border border-outline-variant/10">NEXT.JS</span>
+                                <span
+                                    class="px-2 py-0.5 bg-surface rounded text-[8px] font-mono border border-outline-variant/10">TS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <div
+                        class="absolute -inset-4 bg-gradient-to-r from-primary/30 to-secondary/30 blur-3xl opacity-40 group-hover:opacity-60 transition-opacity">
+                    </div>
+                    <div
+                        class="relative rounded-2xl bg-[#0d1117] border border-white/10 p-8 font-mono text-sm shadow-[0_32px_64px_-16px_rgba(0,0,0,0.8)] overflow-hidden">
+                        <div class="flex items-center gap-2 mb-8 border-b border-white/5 pb-4">
+                            <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                            <span class="ml-4 text-[10px] text-white/40 tracking-widest uppercase">Editor —
+                                main.rs</span>
+                        </div>
+                        <div class="space-y-2.5 overflow-x-auto custom-scrollbar">
+                            <p class="text-white/40 italic">// Critical: Initialize the synthesis kernel</p>
+                            <p class="text-[#ff7b72]">use <span class="text-[#d2a8ff]">tresapps_core</span>::{<span
+                                    class="text-[#79c0ff]">Engine</span>, <span class="text-[#79c0ff]">Context</span>};
+                            </p>
+                            <p> </p>
+                            <p class="text-[#ff7b72]">async fn <span class="text-[#d2a8ff]">synthesize_asset</span>(ctx:
+                                Context) -&gt; <span class="text-[#79c0ff]">Result</span>&lt;(), <span
+                                    class="text-[#79c0ff]">Error</span>&gt; {</p>
+                            <p class="pl-4 text-[#79c0ff]">let <span class="text-white">lab = Engine::</span><span
+                                    class="text-[#d2a8ff]">new</span>(Config {</p>
+                            <p class="pl-8 text-white">mode: <span class="text-[#a5d6ff]">"experimental"</span>,</p>
+                            <p class="pl-8 text-white">depth: <span class="text-[#79c0ff]">u32</span>::<span
+                                    class="text-white">MAX,</span></p>
+                            <p class="pl-4 text-white">});</p>
+                            <p> </p>
+                            <p class="pl-4 text-white">lab.start().<span class="text-[#ff7b72]">await</span>?;</p>
+                            <p class="pl-4 text-white/40 italic">// Pipeline execution...</p>
+                            <p class="pl-4 text-white"><span class="text-[#ff7b72]">Ok</span>(())</p>
+                            <p class="text-white">}</p>
+                            <p class="text-primary cursor-blink border-r-2 border-primary w-max h-5 inline-block">_</p>
+                        </div>
+                        <!-- Console Overlay -->
+                        <div
+                            class="absolute bottom-4 right-4 bg-surface-container-highest/90 border border-white/10 px-4 py-2 rounded-lg text-[10px] font-mono text-secondary backdrop-blur-md shadow-2xl">
+                            <div class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                                BUILD SUCCESSFUL [2.4s]
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Latest Activity Float -->
+                    <div
+                        class="absolute -bottom-12 -left-8 glass p-6 rounded-2xl border border-outline-variant/30 shadow-2xl scale-90 md:scale-100">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center">
+                                <span class="material-symbols-outlined text-on-primary-fixed"
+                                    data-icon="git_branch">git_branch</span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">
+                                    Latest Commit</p>
+                                <p class="text-sm font-bold text-white">feat(core): optimized kernel</p>
+                                <p class="text-[10px] text-primary">v2.4.1-stable</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Services / Technical Pillars -->
+    <section class="py-32 px-8 max-w-7xl mx-auto text-center">
+        <div class="mb-24 reveal-on-scroll" style="animation: reveal 0.8s forwards;">
+            <h2 class="text-5xl font-headline font-bold mb-6 tracking-tight">Technical <span
+                    class="text-secondary">Pillars</span></h2>
+            <p class="text-on-surface-variant max-w-xl mx-auto">The foundational methodologies that ensure every product
+                we build is ready for massive scale.</p>
+        </div>
+        <div class="grid md:grid-cols-4 gap-12">
+            <div class="space-y-6 text-center group">
+                <div
+                    class="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-primary-container group-hover:text-on-primary-container transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                    <span class="material-symbols-outlined text-4xl" data-icon="code_blocks">code_blocks</span>
+                </div>
+                <h3 class="font-bold text-xl">SaaS Dev</h3>
+                <p class="text-on-surface-variant text-sm leading-relaxed">End-to-end product architecture and
+                    high-fidelity UI implementation.</p>
+            </div>
+            <div class="space-y-6 text-center group">
+                <div
+                    class="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-secondary-container group-hover:text-on-secondary-container transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3">
+                    <span class="material-symbols-outlined text-4xl" data-icon="deployed_code">deployed_code</span>
+                </div>
+                <h3 class="font-bold text-xl">Custom Systems</h3>
+                <p class="text-on-surface-variant text-sm leading-relaxed">Bespoke software engines tailored for complex
+                    industrial logic.</p>
+            </div>
+            <div class="space-y-6 text-center group">
+                <div
+                    class="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-tertiary-container group-hover:text-on-tertiary-container transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                    <span class="material-symbols-outlined text-4xl" data-icon="auto_mode">auto_mode</span>
+                </div>
+                <h3 class="font-bold text-xl">Autonomous Ops</h3>
+                <p class="text-on-surface-variant text-sm leading-relaxed">Intelligent workflows that eliminate
+                    operational friction via AI integration.</p>
+            </div>
+            <div class="space-y-6 text-center group">
+                <div
+                    class="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-primary-fixed-dim/20 group-hover:text-primary-fixed transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3">
+                    <span class="material-symbols-outlined text-4xl" data-icon="account_tree">account_tree</span>
+                </div>
+                <h3 class="font-bold text-xl">Infrastructure</h3>
+                <p class="text-on-surface-variant text-sm leading-relaxed">Cloud-native architectures designed for
+                    millions of concurrent users.</p>
+            </div>
+        </div>
+    </section>
+    <!-- How It Works (Timeline) -->
+    <section class="py-32 bg-surface-container-low overflow-hidden">
+        <div class="max-w-7xl mx-auto px-8 relative">
+            <div class="text-center mb-24 reveal-on-scroll" style="animation: reveal 0.8s forwards;">
+                <h2 class="text-4xl font-headline font-bold">The Synthesis <span class="text-primary">Process</span>
+                </h2>
+                <p class="text-on-surface-variant mt-4">A proven journey from concept to market dominance.</p>
+            </div>
+            <div class="relative">
+                <div
+                    class="absolute top-1/2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-outline-variant/40 to-transparent hidden md:block -translate-y-1/2">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
+                    <div class="group">
+                        <div
+                            class="w-16 h-16 bg-surface rounded-2xl border-2 border-primary flex items-center justify-center mx-auto mb-8 font-black text-primary text-xl shadow-xl shadow-primary/10 group-hover:scale-110 transition-transform">
+                            01</div>
+                        <h4 class="font-bold text-center mb-3">Idea Injection</h4>
+                        <p class="text-xs text-on-surface-variant px-4 text-center leading-relaxed">Market-fit synthesis
+                            and technical feasibility mapping with our lead engineers.</p>
+                    </div>
+                    <div class="group">
+                        <div
+                            class="w-16 h-16 bg-surface rounded-2xl border-2 border-secondary flex items-center justify-center mx-auto mb-8 font-black text-secondary text-xl shadow-xl shadow-secondary/10 group-hover:scale-110 transition-transform">
+                            02</div>
+                        <h4 class="font-bold text-center mb-3">Design DNA</h4>
+                        <p class="text-xs text-on-surface-variant px-4 text-center leading-relaxed">Building the visual
+                            framework and user interaction models with rapid prototyping.</p>
+                    </div>
+                    <div class="group">
+                        <div
+                            class="w-16 h-16 bg-surface rounded-2xl border-2 border-tertiary flex items-center justify-center mx-auto mb-8 font-black text-tertiary text-xl shadow-xl shadow-tertiary/10 group-hover:scale-110 transition-transform">
+                            03</div>
+                        <h4 class="font-bold text-center mb-3">Neural Build</h4>
+                        <p class="text-xs text-on-surface-variant px-4 text-center leading-relaxed">Heavy-duty core
+                            engineering using our modular component library and cloud systems.</p>
+                    </div>
+                    <div class="group">
+                        <div
+                            class="w-16 h-16 bg-surface rounded-2xl border-2 border-primary-fixed flex items-center justify-center mx-auto mb-8 font-black text-primary-fixed text-xl shadow-xl shadow-primary-fixed/10 group-hover:scale-110 transition-transform">
+                            04</div>
+                        <h4 class="font-bold text-center mb-3">Scale Out</h4>
+                        <p class="text-xs text-on-surface-variant px-4 text-center leading-relaxed">Market activation,
+                            performance tuning, and global infrastructure expansion.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Case Results (Metrics) -->
+    <section class="py-32 px-8 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div
+                class="p-12 rounded-[2.5rem] bg-surface-container border border-outline-variant/10 text-center group hover:bg-surface-container-high transition-all duration-500">
+                <p class="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Cost Reduction
+                </p>
+                <h3 class="text-7xl font-headline font-black text-secondary group-hover:scale-110 transition-transform">
+                    40<span class="text-3xl">%</span></h3>
+                <p class="mt-6 text-sm text-on-surface-variant leading-relaxed">Average operational cost efficiency
+                    across our product portfolio.</p>
+            </div>
+            <div
+                class="p-12 rounded-[2.5rem] bg-surface-container border border-outline-variant/10 text-center group hover:bg-surface-container-high transition-all duration-500">
+                <p class="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Workflow
+                    Velocity</p>
+                <h3 class="text-7xl font-headline font-black text-primary group-hover:scale-110 transition-transform">
+                    12x</h3>
+                <p class="mt-6 text-sm text-on-surface-variant leading-relaxed">Increase in development speed using our
+                    proprietary lab engines.</p>
+            </div>
+            <div
+                class="p-12 rounded-[2.5rem] bg-surface-container border border-outline-variant/10 text-center group hover:bg-surface-container-high transition-all duration-500">
+                <p class="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Global Reach
+                </p>
+                <h3 class="text-7xl font-headline font-black text-tertiary group-hover:scale-110 transition-transform">
+                    2.5M</h3>
+                <p class="mt-6 text-sm text-on-surface-variant leading-relaxed">Active monthly users supported by our
+                    synthetic architectures.</p>
+            </div>
+        </div>
+    </section>
+    <!-- Final CTA -->
+    <section class="py-40 relative overflow-hidden">
+        <div class="absolute inset-0 bg-primary/10 blur-[150px] animate-pulse-slow"></div>
+        <div class="max-w-4xl mx-auto text-center px-8 relative z-10">
+            <h2 class="text-6xl md:text-8xl font-headline font-black tracking-tighter mb-10 leading-[1.1]">
+                Let’s build your next <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-tertiary">SaaS
+                    success</span>
+            </h2>
+            <p class="text-2xl text-on-surface-variant mb-16 font-medium">
+                Turn your concept into a high-performance digital reality. Our lab is standing by for your next
+                breakthrough.
+            </p>
+            <div class="flex justify-center">
+                <button
+                    class="liquid-button bg-primary text-on-primary-fixed font-bold px-12 py-6 rounded-2xl text-xl shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all">
+                    Initiate Project
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="w-full rounded-t-[3rem] mt-20 bg-[#131314] dark:bg-[#131314]">
+        <div
+            class="grid grid-cols-1 md:grid-cols-4 gap-16 px-12 py-24 max-w-7xl mx-auto font-manrope text-sm text-[#adaaab]">
+            <div class="col-span-1 md:col-span-1">
+                <div class="text-2xl font-black text-white mb-8 tracking-tighter uppercase">TresApps</div>
+                <p class="leading-relaxed opacity-80 text-base">Synthesizing the future of SaaS platforms through elite
+                    engineering and visionary design.</p>
+                <div class="flex gap-4 mt-8">
+                    <a class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors"
+                        href="#">
+                        <span class="material-symbols-outlined text-sm" data-icon="terminal">terminal</span>
+                    </a>
+                    <a class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors"
+                        href="#">
+                        <span class="material-symbols-outlined text-sm" data-icon="public">public</span>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-8 uppercase tracking-[0.2em] text-xs">Ecosystem</h5>
+                <ul class="space-y-5">
+                    <li><a class="hover:text-secondary transition-all opacity-80 hover:opacity-100"
+                            href="#">Products</a></li>
+                    <li><a class="hover:text-secondary transition-all opacity-80 hover:opacity-100" href="#">Lab
+                            Repository</a></li>
+                    <li><a class="hover:text-secondary transition-all opacity-80 hover:opacity-100"
+                            href="#">Services</a></li>
+                    <li><a class="hover:text-secondary transition-all opacity-80 hover:opacity-100" href="#">Case
+                            Studies</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-8 uppercase tracking-[0.2em] text-xs">Developer Network</h5>
+                <ul class="space-y-5">
+                    <li><a class="hover:text-secondary transition-all opacity-80 hover:opacity-100" href="#">Github</a>
+                    </li>
+                    <li><a class="hover:text-secondary transition-all opacity-80 hover:opacity-100" href="#">Technical
+                            Docs</a></li>
+                    <li><a class="hover:text-secondary transition-all opacity-80 hover:opacity-100" href="#">Discord</a>
+                    </li>
+                    <li><a class="hover:text-secondary transition-all opacity-80 hover:opacity-100" href="#">X /
+                            Twitter</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-8 uppercase tracking-[0.2em] text-xs">Inquiries</h5>
+                <ul class="space-y-5">
+                    <li><a class="hover:text-secondary transition-all opacity-80 hover:opacity-100"
+                            href="#">Newsletter</a></li>
+                    <li><a class="hover:text-secondary transition-all opacity-80 hover:opacity-100" href="#">Contact
+                            Us</a></li>
+                    <li><a class="text-secondary font-bold flex items-center gap-2 group" href="#">
+                            Start Project
+                            <span
+                                class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform"
+                                data-icon="arrow_forward">arrow_forward</span>
+                        </a></li>
+                </ul>
+            </div>
+        </div>
+        <div
+            class="max-w-7xl mx-auto px-12 py-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-xs opacity-60">© 2024 TresApps Synthetic Lab. Built with precision.</p>
+            <div class="flex gap-8 text-[10px] opacity-40 font-bold uppercase tracking-widest">
+                <a class="hover:opacity-100 transition-opacity" href="#">Privacy Policy</a>
+                <a class="hover:opacity-100 transition-opacity" href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Reveal animation on scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-reveal');
+                    entry.target.style.opacity = '1';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Simple parallax effect for grid background
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const grids = document.querySelectorAll('.hero-grid');
+            grids.forEach(grid => {
+                grid.style.backgroundPositionY = -(scrolled * 0.1) + 'px';
+            });
+        });
+    </script>
+</body>
+
+</html>
