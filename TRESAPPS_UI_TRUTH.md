@@ -7,6 +7,7 @@
 - **Tipografía Hero:** Manrope. Tamaños extremos (`text-7xl` a `text-9xl`). OBLIGATORIO usar `font-black` (weight 900) y tracking negativo (`tracking-tighter`) para titulares principales.
 - **Tipografía Body:** Inter. Tamaños legibles (`text-base` a `text-xl`), color `text-on-surface-variant` (gris/plata) con `leading-relaxed`.
 - **Texto Gradiente (El ADN):** Cualquier texto destacado (ej. "real SaaS") DEBE usar: `text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] via-[#06B6D4] to-[#3B82F6]`. NUNCA usar color sólido.
+- **Assets de Marca (HD):** La marca utiliza assets estáticos de alta fidelidad 3D (ej. `logo-tresapps.png` e `icon.png` ubicados en `/public` y `/src/app`) gestionados estrictamente vía `next/image`. Queda prohibido el uso de SVGs vectoriales simples generados por código para los identificadores principales.
 
 ## 2. RECETAS VISUALES (Copiar y pegar estas clases exactas)
 - **Ambient Glows (Neones de fondo):** `absolute w-[600px] h-[600px] rounded-full blur-[120px] opacity-40 mix-blend-screen pointer-events-none`.
