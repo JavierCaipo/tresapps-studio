@@ -2,17 +2,15 @@
 
 import Link from "next/link";
 import React from "react";
+import TresAppsLogo from "./TresAppsLogo";
 
 export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl dark:bg-[#0e0e0f]/60 shadow-2xl shadow-black/40">
       <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto font-headline tracking-tight font-bold text-sm">
-        <div className="text-xl font-black tracking-tighter text-white uppercase group cursor-pointer">
-          <span className="group-hover:text-primary transition-colors">Tres</span>
-          <span className="text-primary group-hover:text-white transition-colors">
-            Apps
-          </span>
-        </div>
+        <Link href="/" className="cursor-pointer">
+          <TresAppsLogo />
+        </Link>
         <div className="hidden md:flex items-center gap-8">
           <Link
             className="text-[#adaaab] font-medium hover:text-white transition-colors duration-300"
@@ -31,6 +29,12 @@ export default function Navbar() {
             href="#"
           >
             Services
+          </Link>
+          <Link
+            className="text-[#adaaab] font-medium hover:text-white transition-colors duration-300"
+            href="/studio"
+          >
+            Studio
           </Link>
           <Link
             className="text-[#adaaab] font-medium hover:text-white transition-colors duration-300"
