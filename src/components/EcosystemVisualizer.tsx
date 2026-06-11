@@ -165,14 +165,14 @@ export default function EcosystemVisualizer({
       <div className="flex items-center gap-3 mb-6">
         <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10" />
         <p className="text-[10px] font-black tracking-[0.3em] uppercase text-white/30">
-          Monorepo Topology · {nodes.length} Nodes
+          Monorepo Topology · {(nodes || []).length} Nodes
         </p>
         <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/10" />
       </div>
 
       {/* Grid + connector backdrop */}
       <div className="relative">
-        <ConnectorLines count={nodes.length} accentColor={accentColor} />
+        <ConnectorLines count={(nodes || []).length} accentColor={accentColor} />
 
         <motion.div
           variants={containerVariants}
@@ -181,9 +181,9 @@ export default function EcosystemVisualizer({
           viewport={{ once: true, margin: "-80px" }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10"
         >
-          {nodes.map((node, i) => (
+          {(nodes || []).map((node, i) => (
             <NodeCard
-              key={`${node.name}-${i}`}
+              key={`${node?.name}-${i}`}
               node={node}
               accentColor={accentColor}
               index={i}

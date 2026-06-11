@@ -190,9 +190,9 @@ export default async function ProjectPage({
           )}
 
           {/* Stack pills */}
-          {project.stack.length > 0 && (
+          {(project.stack || []).length > 0 && (
             <div className="flex flex-wrap gap-2 pt-2">
-              {project.stack.map((tech) => (
+              {(project.stack || []).map((tech) => (
                 <span
                   key={tech}
                   className="px-3 py-1.5 text-[10px] font-mono font-bold tracking-widest uppercase
@@ -235,11 +235,11 @@ export default async function ProjectPage({
                 color={project.accent_color}
               />
             )}
-            {project.stack.length > 0 && (
+            {(project.stack || []).length > 0 && (
               <InfoCard
                 icon={<Layers className="w-4 h-4" />}
                 label="Tech Stack"
-                content={project.stack.join(" · ")}
+                content={(project.stack || []).join(" · ")}
                 color={project.accent_color}
               />
             )}
@@ -258,13 +258,13 @@ export default async function ProjectPage({
       )}
 
       {/* ── Features ─────────────────────────────────────────────────────── */}
-      {project.features.length > 0 && (
+      {(project.features || []).length > 0 && (
         <section className="max-w-6xl mx-auto px-8 pb-24">
           <p className="text-[10px] font-black tracking-[0.3em] uppercase text-white/30 mb-6 font-mono">
             $ features --list
           </p>
           <div className="grid sm:grid-cols-2 gap-3">
-            {project.features.map((feat) => (
+            {(project.features || []).map((feat) => (
               <div
                 key={feat}
                 className="flex items-start gap-3 p-5 rounded-2xl
