@@ -16,6 +16,7 @@ export default function CinematicShowcase() {
   const haloRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const initialContentRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useGSAP(
     () => {
@@ -59,6 +60,14 @@ export default function CinematicShowcase() {
           0
         )
         .to(
+          imgRef.current,
+          {
+            filter: "brightness(1.2) contrast(1.1)",
+            ease: "power2.inOut",
+          },
+          0
+        )
+        .to(
           contentRef.current,
           {
             opacity: 1,
@@ -83,8 +92,19 @@ export default function CinematicShowcase() {
         {/* Cinematic Expansion Card */}
         <div
           ref={cardRef}
-          className="relative w-[60%] h-[50vh] rounded-2xl bg-[#131314]/90 border border-white/10 backdrop-blur-3xl flex flex-col items-center justify-center overflow-hidden z-10 shadow-2xl"
+          className="relative w-[60%] h-[50vh] rounded-2xl border border-white/10 flex flex-col items-center justify-center overflow-hidden z-10 shadow-2xl"
         >
+          {/* Holographic Background Image */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              ref={imgRef}
+              src="/images/dashboard-industrial.webp" 
+              alt="Dashboard Industrial" 
+              className="w-full h-full object-cover transition-all duration-[1.5s] ease-in-out"
+              style={{ filter: "brightness(0.5) contrast(1)" }}
+            />
+            <div className="absolute inset-0 bg-black/40 mix-blend-overlay" />
+          </div>
           {/* Initial State Content */}
           <div
             ref={initialContentRef}

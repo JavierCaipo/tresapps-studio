@@ -1,9 +1,53 @@
 "use client";
 
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 export default function Timeline() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    // Pulse energy line
+    gsap.fromTo(".energy-line", 
+      { strokeDashoffset: 1000 },
+      { 
+        strokeDashoffset: 0, 
+        duration: 3, 
+        ease: "power2.inOut",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top center",
+        }
+      }
+    );
+
+    // Number counting
+    gsap.utils.toArray<HTMLElement>(".timeline-num").forEach((el) => {
+      const targetNum = parseInt(el.innerText, 10);
+      gsap.fromTo(el, 
+        { innerText: 0 },
+        {
+          innerText: targetNum,
+          duration: 1.5,
+          snap: { innerText: 1 },
+          scrollTrigger: {
+            trigger: el,
+            start: "top 80%",
+          },
+          onUpdate: function() {
+            el.innerText = '0' + Math.round(this.targets()[0].innerText);
+          }
+        }
+      );
+    });
+  }, { scope: containerRef });
   return (
     <section className="py-32 bg-surface-container-low overflow-hidden">
       <div className="max-w-7xl mx-auto px-8 relative">
@@ -22,8 +66,27 @@ export default function Timeline() {
           </p>
         </motion.div>
 
-        <div className="relative">
-          <div className="absolute top-1/2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-outline-variant/40 to-transparent hidden md:block -translate-y-1/2"></div>
+        <div className="relative" ref={containerRef}>
+          {/* Energy line using SVG for stroke-dashoffset */}
+          <div className="absolute top-1/2 left-0 w-full h-[2px] hidden md:block -translate-y-1/2">
+            <svg width="100%" height="2" preserveAspectRatio="none">
+              <line 
+                x1="0" y1="1" x2="100%" y2="1" 
+                stroke="url(#energy-grad)" 
+                strokeWidth="2" 
+                strokeDasharray="1000" 
+                strokeDashoffset="1000"
+                className="energy-line"
+              />
+              <defs>
+                <linearGradient id="energy-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="transparent" />
+                  <stop offset="50%" stopColor="#8B5CF6" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="transparent" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
             {[
               {
@@ -60,7 +123,7 @@ export default function Timeline() {
                 className="group"
               >
                 <div
-                  className={`w-16 h-16 bg-surface rounded-2xl border-2 border-${item.color} flex items-center justify-center mx-auto mb-8 font-black text-${item.color} text-xl shadow-xl shadow-${item.color}/10 group-hover:scale-110 transition-transform`}
+                  className={`w-16 h-16 bg-surface rounded-2xl border-2 border-${item.color} flex items-center justify-center mx-auto mb-8 font-black text-${item.color} text-xl shadow-xl shadow-${item.color}/10 group-hover:scale-110 transition-transform timeline-num`}
                 >
                   {item.num}
                 </div>

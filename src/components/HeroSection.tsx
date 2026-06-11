@@ -84,9 +84,9 @@ export default function HeroSection() {
             </span>
           </div>
 
-          <h1 className="text-white font-black text-6xl md:text-8xl tracking-tighter leading-none">
+          <h1 className="text-white font-black text-6xl md:text-8xl tracking-tighter leading-none pr-2">
             We build{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] via-[#06B6D4] to-[#3B82F6]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] via-[#06B6D4] to-[#3B82F6] inline-block pr-2">
               real SaaS
             </span>{" "}
             products

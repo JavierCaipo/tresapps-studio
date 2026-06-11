@@ -24,46 +24,78 @@ export default function Metrics() {
             ready for massive scale.
           </p>
         </motion.div>
-        <div className="grid md:grid-cols-4 gap-12">
-          <div className="space-y-6 text-center group">
-            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-primary-container group-hover:text-on-primary-container transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+        <div className="grid md:grid-cols-4 gap-12" style={{ perspective: 1000 }}>
+          <motion.div 
+            whileHover={{ scale: 1.05, rotateX: 5, rotateY: -5, z: 20 }}
+            className="space-y-6 text-center group relative p-6 rounded-2xl hover:bg-[#131314]/40 border border-transparent hover:border-white/5 overflow-hidden transition-colors"
+          >
+            <motion.div
+              animate={{ top: ["-20%", "120%"] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              className="absolute left-0 w-full h-[1px] bg-white/20 shadow-[0_0_15px_rgba(255,255,255,0.8)] opacity-0 group-hover:opacity-100 z-0 pointer-events-none"
+            />
+            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-primary-container group-hover:text-on-primary-container transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 relative z-10">
               <Code className="w-10 h-10" />
             </div>
-            <h3 className="font-bold text-xl">SaaS Dev</h3>
-            <p className="text-on-surface-variant text-sm leading-relaxed">
+            <h3 className="font-bold text-xl relative z-10">SaaS Dev</h3>
+            <p className="text-on-surface-variant text-sm leading-relaxed relative z-10">
               End-to-end product architecture and high-fidelity UI
               implementation.
             </p>
-          </div>
-          <div className="space-y-6 text-center group">
-            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-secondary-container group-hover:text-on-secondary-container transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3">
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05, rotateX: 5, rotateY: 5, z: 20 }}
+            className="space-y-6 text-center group relative p-6 rounded-2xl hover:bg-[#131314]/40 border border-transparent hover:border-white/5 overflow-hidden transition-colors"
+          >
+            <motion.div
+              animate={{ top: ["-20%", "120%"] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear", delay: 0.5 }}
+              className="absolute left-0 w-full h-[1px] bg-white/20 shadow-[0_0_15px_rgba(255,255,255,0.8)] opacity-0 group-hover:opacity-100 z-0 pointer-events-none"
+            />
+            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-secondary-container group-hover:text-on-secondary-container transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3 relative z-10">
               <Server className="w-10 h-10" />
             </div>
-            <h3 className="font-bold text-xl">Custom Systems</h3>
-            <p className="text-on-surface-variant text-sm leading-relaxed">
+            <h3 className="font-bold text-xl relative z-10">Custom Systems</h3>
+            <p className="text-on-surface-variant text-sm leading-relaxed relative z-10">
               Bespoke software engines tailored for complex industrial logic.
             </p>
-          </div>
-          <div className="space-y-6 text-center group">
-            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-tertiary-container group-hover:text-on-tertiary-container transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05, rotateX: -5, rotateY: -5, z: 20 }}
+            className="space-y-6 text-center group relative p-6 rounded-2xl hover:bg-[#131314]/40 border border-transparent hover:border-white/5 overflow-hidden transition-colors"
+          >
+            <motion.div
+              animate={{ top: ["-20%", "120%"] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear", delay: 1 }}
+              className="absolute left-0 w-full h-[1px] bg-white/20 shadow-[0_0_15px_rgba(255,255,255,0.8)] opacity-0 group-hover:opacity-100 z-0 pointer-events-none"
+            />
+            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-tertiary-container group-hover:text-on-tertiary-container transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 relative z-10">
               <Bot className="w-10 h-10" />
             </div>
-            <h3 className="font-bold text-xl">Autonomous Ops</h3>
-            <p className="text-on-surface-variant text-sm leading-relaxed">
+            <h3 className="font-bold text-xl relative z-10">Autonomous Ops</h3>
+            <p className="text-on-surface-variant text-sm leading-relaxed relative z-10">
               Intelligent workflows that eliminate operational friction via AI
               integration.
             </p>
-          </div>
-          <div className="space-y-6 text-center group">
-            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-primary-fixed-dim/20 group-hover:text-primary-fixed transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3">
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05, rotateX: -5, rotateY: 5, z: 20 }}
+            className="space-y-6 text-center group relative p-6 rounded-2xl hover:bg-[#131314]/40 border border-transparent hover:border-white/5 overflow-hidden transition-colors"
+          >
+            <motion.div
+              animate={{ top: ["-20%", "120%"] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear", delay: 1.5 }}
+              className="absolute left-0 w-full h-[1px] bg-white/20 shadow-[0_0_15px_rgba(255,255,255,0.8)] opacity-0 group-hover:opacity-100 z-0 pointer-events-none"
+            />
+            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-surface-container flex items-center justify-center group-hover:bg-primary-fixed-dim/20 group-hover:text-primary-fixed transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3 relative z-10">
               <Network className="w-10 h-10" />
             </div>
-            <h3 className="font-bold text-xl">Infrastructure</h3>
-            <p className="text-on-surface-variant text-sm leading-relaxed">
+            <h3 className="font-bold text-xl relative z-10">Infrastructure</h3>
+            <p className="text-on-surface-variant text-sm leading-relaxed relative z-10">
               Cloud-native architectures designed for millions of concurrent
               users.
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 

@@ -10,6 +10,7 @@ import {
 } from "framer-motion";
 import { Rocket, Brain, Shield } from "lucide-react";
 import React, { useState, useRef } from "react";
+import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -235,14 +236,16 @@ function ProductCard({
           </div>
 
           {/* CTA Button */}
-          <button
-            className={`w-full py-3.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300
-              ${card.buttonClass}
-              ${isHovered && isCenter ? card.buttonGlow : ""}
-              ${isHovered && !isCenter ? "brightness-125" : ""}`}
-          >
-            View Project
-          </button>
+          <Link href={`/projects/${card.id}`} className="w-full mt-auto block">
+            <button
+              className={`w-full py-3.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300
+                ${card.buttonClass}
+                ${isHovered && isCenter ? card.buttonGlow : ""}
+                ${isHovered && !isCenter ? "brightness-125" : ""}`}
+            >
+              View Project
+            </button>
+          </Link>
         </div>
       </div>
     </motion.div>

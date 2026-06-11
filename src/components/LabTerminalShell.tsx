@@ -35,9 +35,9 @@ export default function LabTerminalShell({
               <Terminal className="w-4 h-4" />
               $ TRES_APPS --EXPERIMENTAL_MODE
             </div>
-            <h2 className="text-6xl font-headline font-black italic tracking-tighter uppercase leading-none">
+            <h2 className="text-6xl font-headline font-black italic tracking-tighter uppercase leading-none pr-4">
               The Synthetic{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary inline-block pr-2">
                 Lab
               </span>
             </h2>
@@ -59,9 +59,12 @@ export default function LabTerminalShell({
                 <div className="w-3 h-3 rounded-full bg-red-500/80" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
                 <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                <span className="ml-4 text-[10px] text-white/40 tracking-widest uppercase">
+                <span className="ml-4 text-[10px] text-white/40 tracking-widest uppercase flex-1">
                   Editor — main.rs
                 </span>
+                <button onClick={() => window.open('https://tucrm.tresapps.app', '_blank')} className="text-white/40 hover:text-white transition-colors cursor-pointer p-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                </button>
               </div>
               <div className="space-y-2.5 overflow-x-auto custom-scrollbar pb-4">
                 <p className="text-white/40 italic">

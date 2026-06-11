@@ -19,3 +19,4 @@
 1. **ANTES DE ESCRIBIR CÓDIGO:** Debes leer obligatoriamente este archivo.
 2. **AL MODIFICAR UI:** Aplica las recetas visuales de la Sección 2. No inventes clases de Tailwind nuevas para las tarjetas o textos principales.
 3. **ACTUALIZACIÓN CONTINUA:** Si creamos un nuevo componente validado (ej. una tabla de datos futurista), tienes la obligación de registrar las clases base de ese componente en este archivo.
+4. **ANIMACIONES PROFUNDAS (2040):** Motion must simulate energy flow and holographic depth. Utiliza GSAP para conteos y flujos de energía (stroke-dashoffset), y Framer Motion con `perspective` para rotaciones espaciales en 3D o pseudo-escaneos con luz.
