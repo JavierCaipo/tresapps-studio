@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   title: "TresApps | High-End SaaS Product Studio & Lab",
   description: "We build real SaaS products",
   icons: {
-    icon: '/icon.png',
-    apple: '/apple-icon.png',
+    icon: '/icon.png?v=2',
+    apple: '/apple-icon.png?v=2',
   },
 };
 
