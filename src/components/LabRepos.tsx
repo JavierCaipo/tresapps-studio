@@ -119,12 +119,15 @@ function RepoCard({ repo }: { repo: GitHubRepo }) {
     "day"
   );
 
+  const isVendeMas = repo.name.toLowerCase().includes("vendemas");
+  const targetUrl = isVendeMas ? "https://tucrm.tresapps.app" : repo.html_url;
+
   return (
     <a
-      href={repo.html_url}
+      href={targetUrl}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`Open ${repo.name} on GitHub`}
+      aria-label={`Open ${repo.name}`}
       className="group flex flex-col gap-3 p-5 rounded-2xl
         bg-[#131314]/60 backdrop-blur-2xl border border-white/10
         hover:scale-[1.02] hover:border-[#8B5CF6]/50
