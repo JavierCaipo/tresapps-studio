@@ -59,13 +59,17 @@ export async function generateMetadata({
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function StatusPill({ status }: { status: ProjectRow["status"] }) {
-  const map: Record<ProjectRow["status"], { label: string; color: string }> = {
-    live:     { label: "Live",     color: "#10B981" },
-    beta:     { label: "Beta",     color: "#F59E0B" },
-    archived: { label: "Archived", color: "#6B7280" },
+function StatusPill({ status }: { status: string | null | undefined }) {
+  const map: Record<string, { label: string; color: string }> = {
+    live:     { label: "Live",     color: "#10B981" }, // Emerald
+    beta:     { label: "Beta",     color: "#F59E0B" }, // Amber
+    archived: { label: "Archived", color: "#6B7280" }, // Gray
   };
-  const { label, color } = map[status];
+
+  // Extracción segura con Fallback a un estado "In Development" (Neón Púrpura)
+  const safeStatus = status?.toLowerCase() || 'development';
+  const current = map[safeStatus] || { label: "In Development", color: "#8B5CF6" };
+  const { label, color } = current;
   return (
     <span
       className="inline-flex items-center gap-1.5 text-[9px] font-black tracking-[0.25em] uppercase px-3 py-1.5 rounded-full border backdrop-blur-sm"
