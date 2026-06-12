@@ -33,9 +33,9 @@ export default function CinematicShowcase() {
       tl.to(
         cardRef.current,
         {
-          width: "100vw",
-          height: "100vh",
-          borderRadius: "0px",
+          width: "90vw",
+          height: "85vh",
+          borderRadius: "24px",
           ease: "power2.inOut",
         },
         0
@@ -75,6 +75,16 @@ export default function CinematicShowcase() {
             ease: "power2.out",
           },
           0.2
+        )
+        // Táctica de Fuga (Opaquedad/Contenido)
+        .to(
+          cardRef.current,
+          {
+            opacity: 0.5,
+            filter: "blur(10px)",
+            ease: "power2.inOut",
+          },
+          "+=0.2"
         );
     },
     { scope: containerRef }

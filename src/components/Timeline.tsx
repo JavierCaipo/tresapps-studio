@@ -24,6 +24,7 @@ export default function Timeline() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top center",
+          toggleActions: "play none none reverse",
         }
       }
     );
@@ -40,6 +41,7 @@ export default function Timeline() {
           scrollTrigger: {
             trigger: el,
             start: "top 80%",
+            toggleActions: "play none none reverse",
           },
           onUpdate: function() {
             el.innerText = '0' + Math.round(this.targets()[0].innerText);
