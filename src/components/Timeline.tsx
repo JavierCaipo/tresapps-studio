@@ -11,47 +11,70 @@ if (typeof window !== "undefined") {
 }
 
 export default function Timeline() {
+  const sectionRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    // Pulse energy line
-    gsap.fromTo(".energy-line", 
-      { strokeDashoffset: 1000 },
-      { 
-        strokeDashoffset: 0, 
-        duration: 3, 
-        ease: "power2.inOut",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top center",
-          toggleActions: "play none none reverse",
-        }
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "center center",
+        end: "+=150%",
+        scrub: 1,
+        pin: true,
       }
+    });
+
+    // 1. Línea de Energía dibujándose
+    tl.fromTo(".energy-line", 
+      { strokeDashoffset: 1000 },
+      { strokeDashoffset: 0, duration: 4, ease: "none" },
+      0
     );
 
-    // Number counting
-    gsap.utils.toArray<HTMLElement>(".timeline-num").forEach((el) => {
-      const targetNum = parseInt(el.innerText, 10);
-      gsap.fromTo(el, 
-        { innerText: 0 },
-        {
-          innerText: targetNum,
-          duration: 1.5,
-          snap: { innerText: 1 },
-          scrollTrigger: {
-            trigger: el,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
+    // 2. Nodos Secuenciales
+    const nodes = gsap.utils.toArray<HTMLElement>(".timeline-node");
+    nodes.forEach((node, i) => {
+      const startTime = i * 1; 
+
+      const numEl = node.querySelector(".timeline-num") as HTMLElement;
+      if (numEl) {
+        const targetNum = parseInt(numEl.innerText, 10);
+        tl.fromTo(numEl, 
+          { innerText: 0 },
+          {
+            innerText: targetNum,
+            duration: 0.5,
+            snap: { innerText: 1 },
+            onUpdate: function() {
+              numEl.innerText = '0' + Math.round(Number(this.targets()[0].innerText));
+            }
           },
-          onUpdate: function() {
-            el.innerText = '0' + Math.round(this.targets()[0].innerText);
-          }
-        }
-      );
+          startTime
+        );
+      }
+
+      // Activación del nodo completo
+      tl.to(node, {
+        opacity: 1,
+        scale: 1,
+        filter: "drop-shadow(0 0 20px rgba(139, 92, 246, 0.5))",
+        duration: 0.5,
+        ease: "power2.out",
+      }, startTime);
+
+      // Elevación de texto
+      const texts = node.querySelectorAll(".timeline-text");
+      tl.to(texts, {
+        y: 0,
+        duration: 0.5,
+        ease: "power2.out"
+      }, startTime);
     });
-  }, { scope: containerRef });
+
+  }, { scope: sectionRef });
   return (
-    <section className="py-32 bg-surface-container-low overflow-hidden">
+    <section ref={sectionRef} className="py-32 bg-surface-container-low overflow-hidden">
       <div className="max-w-7xl mx-auto px-8 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -115,25 +138,22 @@ export default function Timeline() {
                 title: "Scale Out",
                 desc: "Market activation, performance tuning, and global infrastructure expansion.",
               },
-            ].map((item, i) => (
-              <motion.div
+            ].map((item) => (
+              <div
                 key={item.num}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: i * 0.1 }}
-                className="group"
+                className="group timeline-node opacity-30 scale-95"
+                style={{ filter: "drop-shadow(0 0 0px rgba(139, 92, 246, 0))" }}
               >
                 <div
-                  className={`w-16 h-16 bg-surface rounded-2xl border-2 border-${item.color} flex items-center justify-center mx-auto mb-8 font-black text-${item.color} text-xl shadow-xl shadow-${item.color}/10 group-hover:scale-110 transition-transform timeline-num`}
+                  className={`w-16 h-16 bg-surface rounded-2xl border-2 border-${item.color} flex items-center justify-center mx-auto mb-8 font-black text-${item.color} text-xl transition-transform timeline-num`}
                 >
                   {item.num}
                 </div>
-                <h4 className="font-bold text-center mb-3">{item.title}</h4>
-                <p className="text-xs text-on-surface-variant px-4 text-center leading-relaxed">
+                <h4 className="font-bold text-center mb-3 timeline-text translate-y-[20px]">{item.title}</h4>
+                <p className="text-xs text-on-surface-variant px-4 text-center leading-relaxed timeline-text translate-y-[20px]">
                   {item.desc}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
