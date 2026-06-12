@@ -24,7 +24,7 @@ export default function CinematicShowcase() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",
-          end: "bottom bottom",
+          end: "+=100%",
           scrub: 1.5, // Sedoso retraso inercial
           pin: true,
         },
@@ -91,8 +91,8 @@ export default function CinematicShowcase() {
   );
 
   return (
-    <section ref={containerRef} className="h-[200vh] w-full bg-[#0A0A0B] relative z-10">
-      <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
+    <section ref={containerRef} className="w-full bg-[#0A0A0B] relative z-10">
+      <div className="h-screen w-full flex items-center justify-center overflow-hidden">
         {/* Neon Halo Bloom */}
         <div
           ref={haloRef}

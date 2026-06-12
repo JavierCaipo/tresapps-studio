@@ -236,7 +236,7 @@ function ProductCard({
           </div>
 
           {/* CTA Button */}
-          <Link href={`/projects/${card.id}`} className="w-full mt-auto block">
+          <Link href={`/projects/${card.id}`} prefetch={false} className="w-full mt-auto block">
             <button
               className={`w-full py-3.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300
                 ${card.buttonClass}
