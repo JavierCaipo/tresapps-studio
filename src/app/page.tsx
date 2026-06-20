@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   // ── Fetch all projects from Supabase ────────────────────────────────────────
-  const { data, error } = await supabase
+  const { data: projects, error } = await supabase
     .from("projects")
     .select("*")
     .order("created_at", { ascending: true });
@@ -24,12 +24,13 @@ export default async function Home() {
     console.error("[Home] Supabase fetch error:", error.message);
   }
 
-  const projects: Project[] = (data ?? []) as Project[];
+  // ── Fallback defensivo: garantiza que .filter() nunca opera sobre null/undefined ──
+  const safeProjects: Project[] = (projects ?? []) as Project[];
 
   // ── JTBD Segmentation ───────────────────────────────────────────────────────
-  const ecosystems = projects.filter((p) => p.category === "ecosystem");
-  const utilities  = projects.filter((p) => p.category === "utility");
-  const labs       = projects.filter((p) => p.category === "lab");
+  const ecosystems = safeProjects.filter((p) => p.category === "ecosystem");
+  const utilities  = safeProjects.filter((p) => p.category === "utility");
+  const labs       = safeProjects.filter((p) => p.category === "lab");
 
   return (
     <ModalProvider>
