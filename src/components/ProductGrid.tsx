@@ -5,109 +5,49 @@ import {
   useScroll,
   useTransform,
   useSpring,
-  useVelocity,
   MotionValue,
 } from "framer-motion";
-import { Rocket, Brain, Shield } from "lucide-react";
 import React, { useState, useRef } from "react";
 import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type CardConfig = {
+export type Project = {
   id: string;
-  icon: React.ReactNode;
-  label: string;
-  labelColor: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  tags: string[];
-  borderClass: string;
-  haloColor: string;
-  haloColor2: string;
-  buttonClass: string;
-  buttonGlow: string;
-  iconBg: string;
-  iconColor: string;
-  parallaxSpeed: number; // 0–1 relative velocity
+  slug: string;
+  name: string;
+  tagline?: string | null;
+  description?: string | null;
+  status: "live" | "beta" | "archived";
+  accent_color: string;
+  accent_color_2: string;
+  stack: string[];
+  features: string[];
+  // ── JTBD Matrix fields ────────────────────────────────────────────────────
+  category?: "ecosystem" | "utility" | "lab" | null;
+  jtbd_headline?: string | null;
+  jtbd_outcome?: string | null;
+  external_url?: string | null;
 };
 
-// ─── Card Data ────────────────────────────────────────────────────────────────
+// ─── Status badge colours ──────────────────────────────────────────────────────
 
-const cards: CardConfig[] = [
-  {
-    id: "nexuscore",
-    icon: <Rocket className="w-7 h-7" strokeWidth={1.5} />,
-    label: "LOGISTICS AI",
-    labelColor: "text-[#06B6D4]",
-    title: "NexusCore –",
-    subtitle: "Logistics AI",
-    description:
-      "Advanced systems of AI in supply chain process optimization, load balancing and predictive routing training for enterprise logistics.",
-    tags: ["LOGISTICS AI", "ENTERPRISE"],
-    borderClass: "border border-[#06B6D4]/30",
-    haloColor: "rgba(139,92,246,0.65)",
-    haloColor2: "rgba(236,72,153,0.45)",
-    buttonClass:
-      "bg-transparent border border-white/20 text-white/70 hover:border-white/40 hover:text-white",
-    buttonGlow: "",
-    iconBg: "bg-[#06B6D4]/15",
-    iconColor: "text-[#06B6D4]",
-    parallaxSpeed: 0.85, // slightly slower → lags behind
-  },
-  {
-    id: "synthetix",
-    icon: <Brain className="w-7 h-7" strokeWidth={1.5} />,
-    label: "ACTIVE LAB",
-    labelColor: "text-[#06B6D4]",
-    title: "Synthetix Labs –",
-    subtitle: "High-performance UI Engine",
-    description:
-      "Synthetix Labs - high-performance UI Engine. Rapid prototyping and generating complex, state-driven interfaces with Lucide-style products.",
-    tags: ["UI ENGINE", "DEVTOOLS"],
-    borderClass: "border-2 border-transparent",
-    haloColor: "rgba(6,182,212,0.75)",
-    haloColor2: "rgba(139,92,246,0.75)",
-    buttonClass:
-      "bg-gradient-to-r from-[#06B6D4] to-[#8B5CF6] text-white font-bold shadow-[0_0_30px_rgba(6,182,212,0.6)]",
-    buttonGlow: "shadow-[0_0_40px_rgba(6,182,212,0.9)]",
-    iconBg: "bg-[#06B6D4]/20",
-    iconColor: "text-[#06B6D4]",
-    parallaxSpeed: 1.0, // fastest — emerges first
-  },
-  {
-    id: "vaultos",
-    icon: <Shield className="w-7 h-7" strokeWidth={1.5} />,
-    label: "ENTERPRISE",
-    labelColor: "text-[#8B5CF6]",
-    title: "VaultOS –",
-    subtitle: "Fintech Security",
-    description:
-      "Inter for standard fintech compliance and security. Military-grade data encryption and management for enterprise-grade vaulting security.",
-    tags: ["FINTECH", "SECURITY"],
-    borderClass: "border border-[#8B5CF6]/30",
-    haloColor: "rgba(6,182,212,0.65)",
-    haloColor2: "rgba(59,130,246,0.45)",
-    buttonClass:
-      "bg-transparent border border-white/20 text-white/70 hover:border-white/40 hover:text-white",
-    buttonGlow: "",
-    iconBg: "bg-[#8B5CF6]/15",
-    iconColor: "text-[#8B5CF6]",
-    parallaxSpeed: 0.75, // slowest → deepest in Z
-  },
-];
+const STATUS_STYLES: Record<string, { label: string; color: string; bg: string }> = {
+  live:     { label: "LIVE",     color: "text-emerald-400", bg: "bg-emerald-400/10 border-emerald-400/20" },
+  beta:     { label: "BETA",     color: "text-amber-400",   bg: "bg-amber-400/10   border-amber-400/20"   },
+  archived: { label: "ARCHIVED", color: "text-white/40",    bg: "bg-white/5        border-white/10"       },
+};
 
 // ─── Individual Card ──────────────────────────────────────────────────────────
 
 function ProductCard({
-  card,
+  project,
   isCenter,
   cardY,
   cardScale,
   cardOpacity,
 }: {
-  card: CardConfig;
+  project: Project;
   isCenter: boolean;
   cardY: MotionValue<number>;
   cardScale: MotionValue<number>;
@@ -122,6 +62,23 @@ function ProductCard({
     const rect = ref.current.getBoundingClientRect();
     setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
+
+  // Derive accent halo from project colours
+  const halo1 = `${project.accent_color}99`;   // ~60% opacity
+  const halo2 = `${project.accent_color_2}77`; // ~47% opacity
+
+  const status = STATUS_STYLES[project.status] ?? STATUS_STYLES.archived;
+
+  // ── Routing: external takes priority ────────────────────────────────────────
+  const isExternal = Boolean(project.external_url);
+  const href       = project.external_url ?? `/projects/${project.slug}`;
+  const linkProps  = isExternal
+    ? { target: "_blank" as const, rel: "noopener noreferrer" }
+    : {};
+
+  // ── Display copy: prefer JTBD fields, fall back to legacy fields ─────────
+  const headline = project.jtbd_headline ?? project.name;
+  const outcome  = project.jtbd_outcome  ?? project.description ?? "";
 
   return (
     <motion.div
@@ -142,14 +99,20 @@ function ProductCard({
       {/* Gradient border shell (center card only) */}
       {isCenter && (
         <div className="absolute inset-0 rounded-3xl z-0 pointer-events-none">
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#06B6D4] via-[#8B5CF6] to-[#3B82F6] opacity-80" />
+          <div
+            className="absolute inset-0 rounded-3xl opacity-80"
+            style={{
+              background: `linear-gradient(135deg, ${project.accent_color}, ${project.accent_color_2})`,
+            }}
+          />
         </div>
       )}
 
       {/* Glass surface */}
       <div
         className={`relative z-10 flex flex-col h-full rounded-[calc(1.5rem-2px)] m-[2px] overflow-hidden
-          bg-[#131314]/80 backdrop-blur-2xl ${!isCenter ? card.borderClass : ""}
+          bg-[#131314]/80 backdrop-blur-2xl
+          ${!isCenter ? `border border-[${project.accent_color}]/30` : ""}
           shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]`}
       >
         {/* Dynamic cursor spotlight */}
@@ -160,12 +123,12 @@ function ProductCard({
             background: isCenter
               ? `radial-gradient(500px circle at ${mousePos.x}px ${mousePos.y}px,
                   rgba(255,255,255,0.08) 0%,
-                  ${card.haloColor} 12%,
-                  ${card.haloColor2} 32%,
+                  ${halo1} 12%,
+                  ${halo2} 32%,
                   transparent 65%)`
               : `radial-gradient(420px circle at ${mousePos.x}px ${mousePos.y}px,
-                  ${card.haloColor} 0%,
-                  ${card.haloColor2} 28%,
+                  ${halo1} 0%,
+                  ${halo2} 28%,
                   transparent 62%)`,
             mixBlendMode: "screen",
           }}
@@ -177,55 +140,60 @@ function ProductCard({
             isHovered ? "opacity-100" : "opacity-30"
           }`}
           style={{
-            background: isCenter
-              ? "linear-gradient(135deg, rgba(6,182,212,0.09) 0%, transparent 50%, rgba(139,92,246,0.09) 100%)"
-              : `linear-gradient(135deg, ${card.haloColor.replace("0.65", "0.04")} 0%, transparent 100%)`,
+            background: `linear-gradient(135deg, ${project.accent_color}15 0%, transparent 100%)`,
           }}
         />
 
         {/* Content */}
         <div className="relative z-10 flex flex-col h-full p-7">
-          {/* Icon + badge row */}
+          {/* Status badge + year row */}
           <div className="flex items-start justify-between mb-6">
             <div
-              className={`w-14 h-14 rounded-2xl ${card.iconBg} ${card.iconColor} flex items-center justify-center
-                border border-white/10 shadow-inner transition-all duration-300 ${
-                  isHovered ? "scale-110 brightness-125" : ""
-                }`}
+              className="w-14 h-14 rounded-2xl flex items-center justify-center
+                border border-white/10 shadow-inner transition-all duration-300 text-2xl font-black"
+              style={{
+                background: `${project.accent_color}20`,
+                color: project.accent_color,
+              }}
             >
-              {card.icon}
+              {project.name.slice(0, 2).toUpperCase()}
             </div>
             <span
-              className={`text-[9px] font-black tracking-[0.22em] uppercase ${card.labelColor}
-                bg-white/5 border border-current/20 px-3 py-1.5 rounded-full backdrop-blur-sm`}
+              className={`text-[9px] font-black tracking-[0.22em] uppercase ${status.color}
+                ${status.bg} border px-3 py-1.5 rounded-full backdrop-blur-sm`}
             >
-              {card.label}
+              {status.label}
             </span>
           </div>
 
           {/* Title hierarchy */}
           <h3 className="text-xl font-black text-white/90 leading-tight mb-1 tracking-tight">
-            {card.title}
+            {project.name}
           </h3>
           <h4
-            className={`text-xl font-black leading-snug mb-4 tracking-tight transition-colors duration-300 ${
+            className={`text-base font-bold leading-snug mb-4 tracking-tight transition-colors duration-300 ${
               isCenter
-                ? "text-[#06B6D4]"
+                ? "text-transparent bg-clip-text bg-gradient-to-r from-[#06B6D4] to-[#8B5CF6]"
                 : isHovered
                 ? "text-white"
-                : "text-white/80"
+                : "text-white/70"
             }`}
+            style={
+              isCenter
+                ? {}
+                : { color: isHovered ? "#fff" : project.accent_color }
+            }
           >
-            {card.subtitle}
+            {headline}
           </h4>
 
           <p className="text-white/50 text-sm leading-relaxed mb-5 flex-grow">
-            {card.description}
+            {outcome}
           </p>
 
-          {/* Tags */}
+          {/* Stack tags */}
           <div className="flex flex-wrap gap-2 mb-6">
-            {card.tags.map((tag) => (
+            {project.stack.slice(0, 4).map((tag) => (
               <span
                 key={tag}
                 className="px-2.5 py-1 text-[9px] font-bold tracking-widest uppercase bg-white/5 border border-white/10 rounded-lg text-white/40"
@@ -235,15 +203,26 @@ function ProductCard({
             ))}
           </div>
 
-          {/* CTA Button */}
-          <Link href={`/projects/${card.id}`} prefetch={false} className="w-full mt-auto block">
+          {/* CTA Button — intelligent routing */}
+          <Link href={href} prefetch={false} className="w-full mt-auto block" {...linkProps}>
             <button
               className={`w-full py-3.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300
-                ${card.buttonClass}
-                ${isHovered && isCenter ? card.buttonGlow : ""}
+                ${
+                  isCenter
+                    ? "text-white font-bold shadow-lg"
+                    : "bg-transparent border border-white/20 text-white/70 hover:border-white/40 hover:text-white"
+                }
+                ${isHovered && isCenter ? "brightness-110 shadow-[0_0_40px_rgba(6,182,212,0.6)]" : ""}
                 ${isHovered && !isCenter ? "brightness-125" : ""}`}
+              style={
+                isCenter
+                  ? {
+                      background: `linear-gradient(135deg, ${project.accent_color}, ${project.accent_color_2})`,
+                    }
+                  : {}
+              }
             >
-              View Project
+              {isExternal ? "Open App ↗" : "View Project →"}
             </button>
           </Link>
         </div>
@@ -254,7 +233,17 @@ function ProductCard({
 
 // ─── Section ──────────────────────────────────────────────────────────────────
 
-export default function ProductGrid() {
+export default function ProductGrid({
+  projects = [],
+  title,
+  highlight,
+  subtitle,
+}: {
+  projects: Project[];
+  title: string;
+  highlight: string;
+  subtitle: string;
+}) {
   const sectionRef = useRef<HTMLElement>(null);
 
   // Scroll progress tied to this section entering the viewport
@@ -270,65 +259,59 @@ export default function ProductGrid() {
     restDelta: 0.001,
   });
 
-  // ── Z-Axis Parallax per card (different speeds) ──────────────────────────
-
-  // Side cards: slower, deeper in Z
-  const sideY = useTransform(smoothProgress, [0, 1], [80, 0]);
-  const sideScale = useTransform(smoothProgress, [0, 1], [0.82, 1]);
+  // ── Z-Axis Parallax per card ───────────────────────────────────────────────
+  const sideY       = useTransform(smoothProgress, [0, 1], [80, 0]);
+  const sideScale   = useTransform(smoothProgress, [0, 1], [0.82, 1]);
   const sideOpacity = useTransform(smoothProgress, [0, 0.4], [0, 1]);
 
-  // Center card: fastest, scale peak higher to maintain hierarchy
-  const centerY = useTransform(smoothProgress, [0, 1], [50, 0]);
-  const centerScale = useTransform(smoothProgress, [0, 1], [0.86, 1.04]);
+  const centerY       = useTransform(smoothProgress, [0, 1], [50, 0]);
+  const centerScale   = useTransform(smoothProgress, [0, 1], [0.86, 1.04]);
   const centerOpacity = useTransform(smoothProgress, [0, 0.3], [0, 1]);
 
-  // ── Glow Parallax — glows drift in opposite direction (20% speed) ─────────
+  // Glows drift inverse direction
   const glowY = useTransform(smoothProgress, [0, 1], ["-10%", "10%"]);
 
+  if (!projects.length) return null;
+
   return (
-    <section ref={sectionRef} className="relative py-32 px-8 max-w-7xl mx-auto overflow-visible">
-      {/* ── Ambient Glows with inverse parallax ──────────────────────────── */}
+    <section ref={sectionRef} className="relative py-24 px-8 max-w-7xl mx-auto overflow-visible">
+      {/* ── Ambient Glows ────────────────────────────────────────────────────── */}
       <motion.div
         style={{ y: glowY }}
-        className="absolute -top-20 left-1/4 w-[500px] h-[300px] bg-[#8B5CF6]/12 blur-[130px] rounded-full pointer-events-none mix-blend-screen"
+        className="absolute -top-20 left-1/4 w-[500px] h-[300px] bg-[#8B5CF6]/10 blur-[130px] rounded-full pointer-events-none mix-blend-screen"
       />
       <motion.div
         style={{ y: glowY }}
-        className="absolute top-20 right-1/4 w-[400px] h-[300px] bg-[#06B6D4]/12 blur-[130px] rounded-full pointer-events-none mix-blend-screen"
+        className="absolute top-20 right-1/4 w-[400px] h-[300px] bg-[#06B6D4]/10 blur-[130px] rounded-full pointer-events-none mix-blend-screen"
       />
 
-      {/* ── Section Header ────────────────────────────────────────────────── */}
+      {/* ── Section Header ───────────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.7 }}
-        className="text-center mb-20"
+        className="text-center mb-16"
       >
-        <p className="text-[#06B6D4] text-[10px] font-black tracking-[0.4em] uppercase mb-4">
-          ENTERPRISE PRODUCTS
-        </p>
-        <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase mb-5">
-          Our Production{" "}
+        <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white uppercase mb-4">
+          {title}{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8B5CF6] via-[#06B6D4] to-[#3B82F6]">
-            Output
+            {highlight}
           </span>
         </h2>
         <p className="text-white/40 max-w-xl mx-auto text-sm tracking-widest uppercase font-medium">
-          Industrial-grade SaaS platforms developed, launched, and scaled
-          <br />
-          by our elite product engineers.
+          {subtitle}
         </p>
       </motion.div>
 
-      {/* ── Cards Grid ───────────────────────────────────────────────────── */}
+      {/* ── Cards Grid ───────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-        {cards.map((card, i) => {
-          const isCenter = i === 1;
+        {projects.map((project, i) => {
+          const isCenter = i === Math.floor(projects.length / 2);
           return (
             <ProductCard
-              key={card.id}
-              card={card}
+              key={project.id}
+              project={project}
               isCenter={isCenter}
               cardY={isCenter ? centerY : sideY}
               cardScale={isCenter ? centerScale : sideScale}

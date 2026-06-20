@@ -62,6 +62,11 @@ export type ProjectRow = {
   features: string[];
   market: string | null;
   impact: string | null;
+  // ── JTBD Matrix fields ──────────────────────────────────────────────────────
+  category: "ecosystem" | "utility" | "lab" | null;
+  jtbd_headline: string | null;
+  jtbd_outcome: string | null;
+  external_url: string | null;
 };
 
 // ─── Insert shapes (what INSERT INTO … accepts) ───────────────────────────────
