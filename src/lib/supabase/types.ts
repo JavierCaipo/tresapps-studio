@@ -67,6 +67,7 @@ export type ProjectRow = {
   jtbd_headline: string | null;
   jtbd_outcome: string | null;
   external_url: string | null;
+  logo_url?: string | null;
 };
 
 // ─── Insert shapes (what INSERT INTO … accepts) ───────────────────────────────

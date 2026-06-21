@@ -43,7 +43,7 @@ export default async function Home() {
           projects={ecosystems}
           title="Enterprise"
           highlight="Ecosystems"
-          subtitle="Plataformas Monorepo de Grado Industrial"
+          subtitle="Plataformas de Grado Industrial"
         />
 
         {/* Tier 2 – Micro-SaaS & Utilities */}

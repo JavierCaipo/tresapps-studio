@@ -5,9 +5,11 @@ import {
   useScroll,
   useTransform,
   useSpring,
+  useMotionValue,
+  useMotionTemplate,
   MotionValue,
 } from "framer-motion";
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -30,6 +32,7 @@ export type Project = {
   jtbd_headline?: string | null;
   jtbd_outcome?: string | null;
   external_url?: string | null;
+  logo_url?: string | null;
 };
 
 // ─── Status badge colours ──────────────────────────────────────────────────────
@@ -44,25 +47,24 @@ const STATUS_STYLES: Record<string, { label: string; color: string; bg: string }
 
 function ProductCard({
   project,
-  isCenter,
   cardY,
   cardScale,
   cardOpacity,
 }: {
   project: Project;
-  isCenter: boolean;
   cardY: MotionValue<number>;
   cardScale: MotionValue<number>;
   cardOpacity: MotionValue<number>;
 }) {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const handleMouseMove = ({ currentTarget, clientX, clientY }: React.MouseEvent) => {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
   };
 
   // Derive accent halo from project colours
@@ -82,65 +84,39 @@ function ProductCard({
   const headline = project.jtbd_headline ?? project.name;
   const outcome  = project.jtbd_outcome  ?? project.description ?? "";
 
+  const spotlightBackground = useMotionTemplate`radial-gradient(400px circle at ${mouseX}px ${mouseY}px, ${halo1}A6 0%, ${halo2}73 28%, transparent 62%)`;
+
   return (
     <motion.div
       ref={ref}
       style={{ y: cardY, scale: cardScale, opacity: cardOpacity }}
       onMouseMove={handleMouseMove}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
       whileHover={{
-        scale: isCenter ? 1.08 : 1.04,
-        y: isCenter ? -14 : -7,
+        scale: 1.02,
+        y: -7,
         transition: { type: "spring", stiffness: 260, damping: 22 },
       }}
-      className={`relative rounded-3xl overflow-hidden flex flex-col cursor-pointer ${
-        isCenter ? "scale-[1.04]" : ""
-      }`}
+      className={`relative rounded-3xl overflow-hidden flex flex-col cursor-pointer group`}
     >
-      {/* Gradient border shell (center card only) */}
-      {isCenter && (
-        <div className="absolute inset-0 rounded-3xl z-0 pointer-events-none">
-          <div
-            className="absolute inset-0 rounded-3xl opacity-80"
-            style={{
-              background: `linear-gradient(135deg, ${project.accent_color}, ${project.accent_color_2})`,
-            }}
-          />
-        </div>
-      )}
-
       {/* Glass surface */}
       <div
         className={`relative z-10 flex flex-col h-full rounded-[calc(1.5rem-2px)] m-[2px] overflow-hidden
           bg-[#131314]/80 backdrop-blur-2xl
-          ${!isCenter ? `border border-[${project.accent_color}]/30` : ""}
+          border border-[${project.accent_color}]/30
           shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]`}
       >
         {/* Dynamic cursor spotlight */}
-        <div
-          className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
+        <motion.div
+          className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
           style={{
-            opacity: isHovered ? 1 : 0,
-            background: isCenter
-              ? `radial-gradient(500px circle at ${mousePos.x}px ${mousePos.y}px,
-                  rgba(255,255,255,0.08) 0%,
-                  ${halo1} 12%,
-                  ${halo2} 32%,
-                  transparent 65%)`
-              : `radial-gradient(420px circle at ${mousePos.x}px ${mousePos.y}px,
-                  ${halo1} 0%,
-                  ${halo2} 28%,
-                  transparent 62%)`,
+            background: spotlightBackground,
             mixBlendMode: "screen",
           }}
         />
 
         {/* Static ambient gradient */}
         <div
-          className={`absolute inset-0 z-0 transition-opacity duration-500 ${
-            isHovered ? "opacity-100" : "opacity-30"
-          }`}
+          className={`absolute inset-0 z-0 transition-opacity duration-500 opacity-30 group-hover:opacity-100`}
           style={{
             background: `linear-gradient(135deg, ${project.accent_color}15 0%, transparent 100%)`,
           }}
@@ -152,13 +128,18 @@ function ProductCard({
           <div className="flex items-start justify-between mb-6">
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center
-                border border-white/10 shadow-inner transition-all duration-300 text-2xl font-black"
+                border border-white/10 shadow-inner transition-all duration-300 text-2xl font-black overflow-hidden"
               style={{
                 background: `${project.accent_color}20`,
                 color: project.accent_color,
               }}
             >
-              {project.name.slice(0, 2).toUpperCase()}
+              {project.logo_url ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={project.logo_url} className="w-full h-full object-contain p-2" alt="logo" />
+              ) : (
+                project.name.substring(0, 2).toUpperCase()
+              )}
             </div>
             <span
               className={`text-[9px] font-black tracking-[0.22em] uppercase ${status.color}
@@ -173,18 +154,8 @@ function ProductCard({
             {project.name}
           </h3>
           <h4
-            className={`text-base font-bold leading-snug mb-4 tracking-tight transition-colors duration-300 ${
-              isCenter
-                ? "text-transparent bg-clip-text bg-gradient-to-r from-[#06B6D4] to-[#8B5CF6]"
-                : isHovered
-                ? "text-white"
-                : "text-white/70"
-            }`}
-            style={
-              isCenter
-                ? {}
-                : { color: isHovered ? "#fff" : project.accent_color }
-            }
+            className={`text-base font-bold leading-snug mb-4 tracking-tight transition-colors duration-300 text-white/70 group-hover:text-white`}
+            style={{ color: project.accent_color }}
           >
             {headline}
           </h4>
@@ -222,20 +193,7 @@ function ProductCard({
           <Link href={href} prefetch={false} className="w-full mt-auto block" {...linkProps}>
             <button
               className={`w-full py-3.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300
-                ${
-                  isCenter
-                    ? "text-white font-bold shadow-lg"
-                    : "bg-transparent border border-white/20 text-white/70 hover:border-white/40 hover:text-white"
-                }
-                ${isHovered && isCenter ? "brightness-110 shadow-[0_0_40px_rgba(6,182,212,0.6)]" : ""}
-                ${isHovered && !isCenter ? "brightness-125" : ""}`}
-              style={
-                isCenter
-                  ? {
-                      background: `linear-gradient(135deg, ${project.accent_color}, ${project.accent_color_2})`,
-                    }
-                  : {}
-              }
+                bg-transparent border border-white/20 text-white/70 hover:border-white/40 hover:text-white group-hover:brightness-125`}
             >
               {isExternal ? "Open App ↗" : "View Project →"}
             </button>
@@ -275,13 +233,9 @@ export default function ProductGrid({
   });
 
   // ── Z-Axis Parallax per card ───────────────────────────────────────────────
-  const sideY       = useTransform(smoothProgress, [0, 1], [80, 0]);
-  const sideScale   = useTransform(smoothProgress, [0, 1], [0.82, 1]);
-  const sideOpacity = useTransform(smoothProgress, [0, 0.4], [0, 1]);
-
-  const centerY       = useTransform(smoothProgress, [0, 1], [50, 0]);
-  const centerScale   = useTransform(smoothProgress, [0, 1], [0.86, 1.04]);
-  const centerOpacity = useTransform(smoothProgress, [0, 0.3], [0, 1]);
+  const cardY       = useTransform(smoothProgress, [0, 1], [80, 0]);
+  const cardScale   = useTransform(smoothProgress, [0, 1], [0.82, 1]);
+  const cardOpacity = useTransform(smoothProgress, [0, 0.4], [0, 1]);
 
   // Glows drift inverse direction
   const glowY = useTransform(smoothProgress, [0, 1], ["-10%", "10%"]);
@@ -321,19 +275,15 @@ export default function ProductGrid({
 
       {/* ── Cards Grid ───────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-        {projects.map((project, i) => {
-          const isCenter = i === Math.floor(projects.length / 2);
-          return (
-            <ProductCard
-              key={project.id}
-              project={project}
-              isCenter={isCenter}
-              cardY={isCenter ? centerY : sideY}
-              cardScale={isCenter ? centerScale : sideScale}
-              cardOpacity={isCenter ? centerOpacity : sideOpacity}
-            />
-          );
-        })}
+        {projects.map((project) => (
+          <ProductCard
+            key={project.id}
+            project={project}
+            cardY={cardY}
+            cardScale={cardScale}
+            cardOpacity={cardOpacity}
+          />
+        ))}
       </div>
     </section>
   );
