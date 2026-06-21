@@ -9,7 +9,7 @@ import {
   useMotionTemplate,
   MotionValue,
 } from "framer-motion";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -48,14 +48,13 @@ const STATUS_STYLES: Record<string, { label: string; color: string; bg: string }
 function ProductCard({
   project,
   cardY,
-  cardScale,
   cardOpacity,
 }: {
   project: Project;
   cardY: MotionValue<number>;
-  cardScale: MotionValue<number>;
   cardOpacity: MotionValue<number>;
 }) {
+  const [isHovered, setIsHovered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const mouseX = useMotionValue(0);
@@ -89,8 +88,10 @@ function ProductCard({
   return (
     <motion.div
       ref={ref}
-      style={{ y: cardY, scale: cardScale, opacity: cardOpacity }}
+      style={{ y: cardY, opacity: cardOpacity }}
       onMouseMove={handleMouseMove}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
       whileHover={{
         scale: 1.02,
         y: -7,
@@ -107,8 +108,9 @@ function ProductCard({
       >
         {/* Dynamic cursor spotlight */}
         <motion.div
-          className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
+          className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
           style={{
+            opacity: isHovered ? 1 : 0,
             background: spotlightBackground,
             mixBlendMode: "screen",
           }}
@@ -234,7 +236,6 @@ export default function ProductGrid({
 
   // ── Z-Axis Parallax per card ───────────────────────────────────────────────
   const cardY       = useTransform(smoothProgress, [0, 1], [80, 0]);
-  const cardScale   = useTransform(smoothProgress, [0, 1], [0.82, 1]);
   const cardOpacity = useTransform(smoothProgress, [0, 0.4], [0, 1]);
 
   // Glows drift inverse direction
@@ -280,7 +281,6 @@ export default function ProductGrid({
             key={project.id}
             project={project}
             cardY={cardY}
-            cardScale={cardScale}
             cardOpacity={cardOpacity}
           />
         ))}
