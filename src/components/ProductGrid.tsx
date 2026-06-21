@@ -88,7 +88,13 @@ function ProductCard({
   return (
     <motion.div
       ref={ref}
-      style={{ y: cardY, opacity: cardOpacity }}
+      style={{
+        y: cardY,
+        opacity: cardOpacity,
+        willChange: "transform, opacity", // Fuerza la creación de una capa de composición en la GPU
+        backfaceVisibility: "hidden",     // Elimina parpadeos y fallas de renderizado en WebKit/Safari
+        transformStyle: "preserve-3d",    // Habilita un contexto 3D nativo de hardware
+      }}
       onMouseMove={handleMouseMove}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
@@ -99,7 +105,7 @@ function ProductCard({
         boxShadow: `0px 20px 40px -10px ${project.accent_color}80`,
         transition: { type: "spring", stiffness: 300, damping: 20 },
       }}
-      className={`relative z-10 transition-colors duration-300 rounded-3xl overflow-hidden flex flex-col cursor-pointer group`}
+      className={`relative z-10 transition-colors duration-300 transform-gpu rounded-3xl overflow-hidden flex flex-col cursor-pointer group`}
     >
       {/* Glass surface */}
       <div
@@ -140,7 +146,7 @@ function ProductCard({
             >
               {project.logo_url ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
-                <img src={project.logo_url} className="w-full h-full object-contain p-2" alt="logo" />
+                <img src={project.logo_url} decoding="async" className="w-full h-full object-contain p-2" alt="logo" />
               ) : (
                 project.name.substring(0, 2).toUpperCase()
               )}
