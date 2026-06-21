@@ -21,8 +21,10 @@ export type Project = {
   status: "live" | "beta" | "archived";
   accent_color: string;
   accent_color_2: string;
-  stack: string[];
-  features: string[];
+  stack?: string[] | null;
+  core_stack?: string[] | null;
+  features?: string[] | null;
+  market?: string | null;
   // ── JTBD Matrix fields ────────────────────────────────────────────────────
   category?: "ecosystem" | "utility" | "lab" | null;
   jtbd_headline?: string | null;
@@ -191,17 +193,30 @@ function ProductCard({
             {outcome}
           </p>
 
-          {/* Stack tags */}
-          <div className="flex flex-wrap gap-2 mb-6">
-            {project.stack.slice(0, 4).map((tag) => (
-              <span
-                key={tag}
-                className="px-2.5 py-1 text-[9px] font-bold tracking-widest uppercase bg-white/5 border border-white/10 rounded-lg text-white/40"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
+          {/* Stack tags — defensive array handling to prevent slice() on null/undefined */}
+          {(() => {
+            // 1. Garantizar que core_stack sea siempre un array válido antes de operar
+            const safeCoreStack = Array.isArray(project.core_stack) ? project.core_stack : [];
+
+            // 2. Construcción segura de los tags
+            const tags = [
+              project.market || "ENTERPRISE",
+              ...safeCoreStack.slice(0, 2),
+            ];
+
+            return (
+              <div className="flex flex-wrap gap-2 mb-6">
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2.5 py-1 text-[9px] font-bold tracking-widest uppercase bg-white/5 border border-white/10 rounded-lg text-white/40"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            );
+          })()}
 
           {/* CTA Button — intelligent routing */}
           <Link href={href} prefetch={false} className="w-full mt-auto block" {...linkProps}>
