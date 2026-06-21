@@ -93,11 +93,13 @@ function ProductCard({
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       whileHover={{
-        scale: 1.02,
-        y: -7,
-        transition: { type: "spring", stiffness: 260, damping: 22 },
+        scale: 1.05,
+        y: -8,
+        zIndex: 50,
+        boxShadow: `0px 20px 40px -10px ${project.accent_color}80`,
+        transition: { type: "spring", stiffness: 300, damping: 20 },
       }}
-      className={`relative rounded-3xl overflow-hidden flex flex-col cursor-pointer group`}
+      className={`relative z-10 transition-colors duration-300 rounded-3xl overflow-hidden flex flex-col cursor-pointer group`}
     >
       {/* Glass surface */}
       <div
@@ -275,7 +277,7 @@ export default function ProductGrid({
       </motion.div>
 
       {/* ── Cards Grid ───────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
         {projects.map((project) => (
           <ProductCard
             key={project.id}
