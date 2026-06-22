@@ -43,15 +43,15 @@ export default async function Home() {
           projects={ecosystems}
           title="Enterprise"
           highlight="Ecosystems"
-          subtitle="Plataformas de Grado Industrial"
+          subtitle="Industrial-Grade Digital Product Infrastructures"
         />
 
         {/* Tier 2 – Micro-SaaS & Utilities */}
         <ProductGrid
           projects={utilities}
-          title="Micro-SaaS &amp;"
+          title="Digital"
           highlight="Utilities"
-          subtitle="Activos Digitales de Alto Impacto"
+          subtitle="High-Impact Micro-SaaS & Automation Assets"
         />
 
         {/* Tier 3 – The Synthetic Lab (I+D) */}
@@ -59,7 +59,7 @@ export default async function Home() {
           projects={labs}
           title="The Synthetic"
           highlight="Lab"
-          subtitle="Forjando el Futuro (I+D)"
+          subtitle="Future Forging & Cognitive Research (R&D)"
         />
 
         <CinematicShowcase />

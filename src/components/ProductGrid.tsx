@@ -55,6 +55,7 @@ function ProductCard({
   cardOpacity: MotionValue<number>;
 }) {
   const [isHovered, setIsHovered] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const mouseX = useMotionValue(0);
@@ -84,6 +85,8 @@ function ProductCard({
   const outcome  = project.jtbd_outcome  ?? project.description ?? "";
 
   const spotlightBackground = useMotionTemplate`radial-gradient(400px circle at ${mouseX}px ${mouseY}px, ${halo1}A6 0%, ${halo2}73 28%, transparent 62%)`;
+
+  const logoPath = `/logos/${project.slug}.svg`;
 
   return (
     <motion.div
@@ -144,11 +147,17 @@ function ProductCard({
                 color: project.accent_color,
               }}
             >
-              {project.logo_url ? (
+              {!imgError ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
-                <img src={project.logo_url} decoding="async" className="w-full h-full object-contain p-2" alt="logo" />
+                <img 
+                  src={logoPath} 
+                  decoding="async" 
+                  onError={() => setImgError(true)} 
+                  className="w-full h-full object-contain p-2" 
+                  alt={`${project.name} logo`} 
+                />
               ) : (
-                project.name.substring(0, 2).toUpperCase()
+                <span className="text-sm font-black">{project.name.substring(0, 2).toUpperCase()}</span>
               )}
             </div>
             <span
