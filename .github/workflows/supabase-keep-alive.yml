@@ -1,34 +1,165 @@
-name: TresApps - Supabase Keep Alive
+name: Supabase Keep Alive
 
 on:
-    schedule:
-        # Se ejecuta todos los días a la medianoche UTC
-        - cron: "0 0 * * *"
-    workflow_dispatch: # Permite ejecutarlo manualmente desde GitHub si es necesario
+  schedule:
+    # Ejecutar todos los días.
+    # 17 minutos después de la hora para reducir retrasos de GitHub Actions.
+    - cron: "17 0 * * *"
+
+  # Permite ejecutar manualmente desde GitHub Actions.
+  workflow_dispatch:
 
 jobs:
-    ping-supabase:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Ping Supabase API con Retry
-              run: |
-                  echo "Realizando petición a la base de datos de TresApps..."
+  ping-supabase:
+    name: Keep Supabase Active
+    runs-on: ubuntu-latest
 
-                  # Hacemos ping específicamente a la tabla 'projects' pidiendo solo 1 registro
-                  HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-                  --retry 3 \
-                  --retry-delay 5 \
-                  --retry-connrefused \
-                  --max-time 15 \
-                  -X GET '${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/projects?select=slug&limit=1' \
-                  -H "apikey: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" \
-                  -H "Authorization: Bearer ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}")
+    # Evita que una ejecución se quede colgada indefinidamente.
+    timeout-minutes: 5
 
-                  echo "Estado de la respuesta HTTP: $HTTP_STATUS"
+    steps:
+      - name: Ping Supabase Database
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
-                  if [ "$HTTP_STATUS" -eq 200 ]; then
-                    echo "✅ Supabase está activo y respondiendo."
-                  else
-                    echo "⚠️ Advertencia: Supabase devolvió un código $HTTP_STATUS."
-                    exit 1
-                  fi
+        run: |
+          set -u
+
+          echo "=========================================="
+          echo "      SUPABASE KEEP ALIVE"
+          echo "=========================================="
+          echo ""
+
+          # ------------------------------------------
+          # 1. Validar configuración
+          # ------------------------------------------
+
+          if [ -z "${SUPABASE_URL:-}" ]; then
+            echo "❌ ERROR: SUPABASE_URL no está configurado."
+            exit 1
+          fi
+
+          if [ -z "${SUPABASE_ANON_KEY:-}" ]; then
+            echo "❌ ERROR: SUPABASE_ANON_KEY no está configurado."
+            exit 1
+          fi
+
+          # Eliminar una posible "/" al final de la URL.
+          SUPABASE_URL="${SUPABASE_URL%/}"
+
+          echo "🌐 Supabase URL configurada."
+          echo "🗄️ Tabla objetivo: negocios"
+          echo ""
+
+          # ------------------------------------------
+          # 2. Ejecutar consulta real
+          # ------------------------------------------
+
+          echo "🔄 Contactando Supabase..."
+          echo "🔄 Ejecutando SELECT sobre negocios..."
+
+          HTTP_STATUS=$(
+            curl \
+              --silent \
+              --show-error \
+              --output /dev/null \
+              --write-out "%{http_code}" \
+              --request GET \
+              --url "${SUPABASE_URL}/rest/v1/negocios?select=id&limit=1" \
+              --header "apikey: ${SUPABASE_ANON_KEY}" \
+              --header "Accept: application/json" \
+              --retry 5 \
+              --retry-delay 5 \
+              --retry-max-time 60 \
+              --retry-connrefused \
+              --connect-timeout 10 \
+              --max-time 30 \
+              2>/tmp/curl-error.log
+          ) || true
+
+          echo ""
+          echo "📡 HTTP Status: ${HTTP_STATUS}"
+
+          # ------------------------------------------
+          # 3. Analizar resultado
+          # ------------------------------------------
+
+          if [[ "${HTTP_STATUS}" =~ ^2[0-9][0-9]$ ]]; then
+
+            echo "------------------------------------------"
+            echo "✅ SUPABASE ESTÁ ACTIVO"
+            echo "✅ PostgreSQL respondió correctamente"
+            echo "✅ Consulta REST ejecutada"
+            echo "------------------------------------------"
+            echo ""
+            echo "🏁 Keep Alive completado correctamente."
+            exit 0
+
+          fi
+
+          # ------------------------------------------
+          # 4. Diagnóstico de errores
+          # ------------------------------------------
+
+          echo ""
+          echo "❌ La petición no fue exitosa."
+
+          case "${HTTP_STATUS}" in
+
+            000)
+              echo "⚠️ No se recibió respuesta HTTP."
+              echo ""
+              echo "Posibles causas:"
+              echo "  • SUPABASE_URL incorrecta"
+              echo "  • Error DNS"
+              echo "  • Problema temporal de red"
+              echo "  • Proyecto Supabase no disponible"
+              ;;
+
+            401)
+              echo "🔐 HTTP 401 - API Key no válida."
+              echo "Revisa SUPABASE_ANON_KEY."
+              ;;
+
+            403)
+              echo "🔒 HTTP 403 - Acceso denegado."
+              echo "Revisa las políticas RLS de la tabla negocios."
+              ;;
+
+            404)
+              echo "🔎 HTTP 404 - Endpoint o tabla no encontrada."
+              echo "Revisa que exista la tabla public.negocios."
+              ;;
+
+            429)
+              echo "🚦 HTTP 429 - Rate limit."
+              echo "GitHub/Supabase está limitando temporalmente la petición."
+              ;;
+
+            500|502|503|504)
+              echo "⚠️ HTTP ${HTTP_STATUS} - Error temporal del servidor."
+              echo "El sistema ya realizó varios reintentos."
+              ;;
+
+            540)
+              echo "⏸️ HTTP 540 - Supabase puede estar pausado."
+              echo "Revisa el estado del proyecto en Supabase Dashboard."
+              ;;
+
+            *)
+              echo "⚠️ HTTP ${HTTP_STATUS} - Respuesta inesperada."
+              ;;
+
+          esac
+
+          echo ""
+
+          if [ -s /tmp/curl-error.log ]; then
+            echo "Detalles técnicos de curl:"
+            cat /tmp/curl-error.log
+          fi
+
+          echo ""
+          echo "❌ Keep Alive FALLÓ."
+          exit 1
