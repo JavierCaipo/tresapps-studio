@@ -2,11 +2,11 @@ name: Supabase Keep Alive
 
 on:
   schedule:
-    # Ejecutar todos los días.
-    # 17 minutos después de la hora para reducir retrasos de GitHub Actions.
+    # Ejecuta todos los días a las 00:17 UTC
+    # = 19:17 del día anterior en Perú
     - cron: "17 0 * * *"
 
-  # Permite ejecutar manualmente desde GitHub Actions.
+  # Permite ejecutarlo manualmente desde GitHub
   workflow_dispatch:
 
 jobs:
@@ -14,50 +14,52 @@ jobs:
     name: Keep Supabase Active
     runs-on: ubuntu-latest
 
-    # Evita que una ejecución se quede colgada indefinidamente.
+    # Evita que el workflow pueda quedar ejecutándose indefinidamente
     timeout-minutes: 5
 
     steps:
       - name: Ping Supabase Database
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
         run: |
           set -u
 
           echo "=========================================="
-          echo "      SUPABASE KEEP ALIVE"
+          echo "          SUPABASE KEEP ALIVE"
           echo "=========================================="
           echo ""
 
-          # ------------------------------------------
-          # 1. Validar configuración
-          # ------------------------------------------
+          # ==========================================
+          # 1. VALIDAR CONFIGURACIÓN
+          # ==========================================
 
           if [ -z "${SUPABASE_URL:-}" ]; then
-            echo "❌ ERROR: SUPABASE_URL no está configurado."
+            echo "❌ ERROR: NEXT_PUBLIC_SUPABASE_URL no está configurado."
             exit 1
           fi
 
           if [ -z "${SUPABASE_ANON_KEY:-}" ]; then
-            echo "❌ ERROR: SUPABASE_ANON_KEY no está configurado."
+            echo "❌ ERROR: NEXT_PUBLIC_SUPABASE_ANON_KEY no está configurado."
             exit 1
           fi
 
-          # Eliminar una posible "/" al final de la URL.
+          # Elimina una posible "/" al final de la URL
           SUPABASE_URL="${SUPABASE_URL%/}"
 
-          echo "🌐 Supabase URL configurada."
-          echo "🗄️ Tabla objetivo: negocios"
+          echo "✅ Supabase URL configurada."
+          echo "✅ Supabase API Key configurada."
+          echo "🗄️ Tabla objetivo: projects"
           echo ""
 
-          # ------------------------------------------
-          # 2. Ejecutar consulta real
-          # ------------------------------------------
+          # ==========================================
+          # 2. CONSULTA REAL A POSTGRESQL
+          # ==========================================
 
-          echo "🔄 Contactando Supabase..."
-          echo "🔄 Ejecutando SELECT sobre negocios..."
+          echo "🌐 Contactando Supabase..."
+          echo "🔄 Ejecutando SELECT sobre projects..."
+          echo ""
 
           HTTP_STATUS=$(
             curl \
@@ -66,7 +68,7 @@ jobs:
               --output /dev/null \
               --write-out "%{http_code}" \
               --request GET \
-              --url "${SUPABASE_URL}/rest/v1/negocios?select=id&limit=1" \
+              --url "${SUPABASE_URL}/rest/v1/projects?select=id&limit=1" \
               --header "apikey: ${SUPABASE_ANON_KEY}" \
               --header "Accept: application/json" \
               --retry 5 \
@@ -78,32 +80,32 @@ jobs:
               2>/tmp/curl-error.log
           ) || true
 
-          echo ""
           echo "📡 HTTP Status: ${HTTP_STATUS}"
+          echo ""
 
-          # ------------------------------------------
-          # 3. Analizar resultado
-          # ------------------------------------------
+          # ==========================================
+          # 3. RESPUESTA EXITOSA
+          # ==========================================
 
           if [[ "${HTTP_STATUS}" =~ ^2[0-9][0-9]$ ]]; then
 
-            echo "------------------------------------------"
+            echo "=========================================="
             echo "✅ SUPABASE ESTÁ ACTIVO"
             echo "✅ PostgreSQL respondió correctamente"
-            echo "✅ Consulta REST ejecutada"
-            echo "------------------------------------------"
+            echo "✅ Tabla projects respondió correctamente"
+            echo "=========================================="
             echo ""
             echo "🏁 Keep Alive completado correctamente."
-            exit 0
 
+            exit 0
           fi
 
-          # ------------------------------------------
-          # 4. Diagnóstico de errores
-          # ------------------------------------------
+          # ==========================================
+          # 4. DIAGNÓSTICO DE ERROR
+          # ==========================================
 
-          echo ""
           echo "❌ La petición no fue exitosa."
+          echo ""
 
           case "${HTTP_STATUS}" in
 
@@ -111,40 +113,49 @@ jobs:
               echo "⚠️ No se recibió respuesta HTTP."
               echo ""
               echo "Posibles causas:"
-              echo "  • SUPABASE_URL incorrecta"
+              echo "  • NEXT_PUBLIC_SUPABASE_URL incorrecta"
               echo "  • Error DNS"
-              echo "  • Problema temporal de red"
               echo "  • Proyecto Supabase no disponible"
+              echo "  • Problema temporal de red"
               ;;
 
             401)
               echo "🔐 HTTP 401 - API Key no válida."
-              echo "Revisa SUPABASE_ANON_KEY."
+              echo ""
+              echo "👉 Revisa:"
+              echo "   NEXT_PUBLIC_SUPABASE_ANON_KEY"
               ;;
 
             403)
               echo "🔒 HTTP 403 - Acceso denegado."
-              echo "Revisa las políticas RLS de la tabla negocios."
+              echo ""
+              echo "👉 Posible problema de RLS/permisos."
+              echo "👉 La tabla projects puede no permitir SELECT público."
               ;;
 
             404)
-              echo "🔎 HTTP 404 - Endpoint o tabla no encontrada."
-              echo "Revisa que exista la tabla public.negocios."
+              echo "🔎 HTTP 404 - Recurso no encontrado."
+              echo ""
+              echo "👉 Verifica que exista la tabla:"
+              echo "   public.projects"
               ;;
 
             429)
-              echo "🚦 HTTP 429 - Rate limit."
-              echo "GitHub/Supabase está limitando temporalmente la petición."
+              echo "🚦 HTTP 429 - Demasiadas solicitudes."
+              echo ""
+              echo "👉 Supabase está aplicando rate limiting."
               ;;
 
             500|502|503|504)
               echo "⚠️ HTTP ${HTTP_STATUS} - Error temporal del servidor."
-              echo "El sistema ya realizó varios reintentos."
+              echo ""
+              echo "👉 Se realizaron varios reintentos."
               ;;
 
             540)
-              echo "⏸️ HTTP 540 - Supabase puede estar pausado."
-              echo "Revisa el estado del proyecto en Supabase Dashboard."
+              echo "⏸️ HTTP 540 - El proyecto puede estar pausado."
+              echo ""
+              echo "👉 Revisa el estado del proyecto en Supabase."
               ;;
 
             *)
@@ -155,11 +166,18 @@ jobs:
 
           echo ""
 
+          # ==========================================
+          # 5. MOSTRAR ERROR TÉCNICO DE CURL
+          # ==========================================
+
           if [ -s /tmp/curl-error.log ]; then
+            echo "------------------------------------------"
             echo "Detalles técnicos de curl:"
+            echo "------------------------------------------"
             cat /tmp/curl-error.log
           fi
 
           echo ""
           echo "❌ Keep Alive FALLÓ."
+
           exit 1
